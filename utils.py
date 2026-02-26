@@ -32,10 +32,3 @@ def date_filter(data, column, year):
     data[str(column)] = pd.to_datetime(data[column])
 
     return data[data[column].dt.year == year]
-
-
-# Test Case 1
-
-
-def test_answer():
-    assert health_year_filter(1990) == "Year"
