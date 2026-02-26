@@ -1,28 +1,9 @@
-import streamlit as st
 import pandas as pd
 import requests
-from fred import fetch_fred
-from eviction import eviction, borough_count
+import streamlit as st
 
-fred_key = "aa9cd57aae80525dc171dbc517b39546"
+main_page = st.Page("main_page.py", title="Main Page")
+page_2 = st.Page("page_2.py", title="Page 2")
 
-claims_df = fetch_fred("NYICLAIMS",fred_key,"Claims")
-
-#Claims
-st.line_chart(claims_df, x = "Date", y = "Claims")
-
-continued_claims_df = fetch_fred("NYCCLAIMS", fred_key,"Continued Claims")
-
-#Continued Claims
-st.line_chart(continued_claims_df, x = "Date", y ="Continued Claims")
-
-############################################################################################
-
-# Evictions Dataset
-eviction_df = eviction()
-# Eviction Count in Boroughs
-borough_data = borough_count(eviction_df)
-st.bar_chart(borough_data, x = "borough", y = "Count")
-
-
-#streamlit run app.py
+pg = st.navigation([main_page, page_2])
+pg.run()
