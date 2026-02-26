@@ -1,0 +1,17 @@
+Project Part 3 Test Cases
+
+Test Case 1:
+Borough = Brooklyn
+Borough = Bergen
+Borough = br0klyn
+
+Test Case 2:
+date = 1180
+date = 2018
+date = January 2021
+
+Test Case 3:
+health_year_filter(df, year, "Category")
+1990, no health insurance
+2018, "Colon Cancer
+2020, "Caloric Intake"
