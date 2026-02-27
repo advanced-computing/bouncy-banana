@@ -1,3 +1,4 @@
 pandas
 jupyter==1.*
 plotly
+pytest
