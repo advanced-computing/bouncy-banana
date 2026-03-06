@@ -2,7 +2,6 @@
 
 # load libraries
 import pandas as pd
-import requests
 
 # Test Definition 1
 
@@ -18,9 +17,7 @@ def health_year_filter(data, year, metric):
 
 
 def borough_count(eviction_data_clean):
-    eviction_data_group = (
-        eviction_data_clean.groupby("borough").size().reset_index(name="Count")
-    )
+    eviction_data_group = eviction_data_clean.groupby("borough").size().reset_index(name="Count")
 
     return eviction_data_group
 
