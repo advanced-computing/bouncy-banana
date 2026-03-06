@@ -1,7 +1,8 @@
 import pandas as pd
 import pytest
 
-from utils import health_year_filter, borough_count
+from utils import borough_count, health_year_filter
+
 
 def test_health_year_filter():
     df = pd.DataFrame({
@@ -11,7 +12,8 @@ def test_health_year_filter():
     })
 
     result = health_year_filter(df, 2020, "No Health Insurance")
-    assert result == 12.6
+    health_expected_value = 12.6
+    assert result == health_expected_value
 
 def test_health_year_filter_not_found():
     df = pd.DataFrame({
@@ -34,8 +36,11 @@ def test_borough_count():
     })
 
     result = borough_count(test_df)
-    assert result.loc[result["borough"] == "Brooklyn", "Count"].values[0] == 2
-    assert result.loc[result["borough"] == "Manhattan", "Count"].values[0] == 2
+    borough_expected_value = 2
+    brooklyn_count = result.loc[result["borough"] == "Brooklyn", "Count"].to_numpy()[0]
+    manhattan_count = result.loc[result["borough"] == "Manhattan", "Count"].to_numpy()[0]
+    assert brooklyn_count == borough_expected_value
+    assert manhattan_count == borough_expected_value
 
 def test_borough_count_empty():
     df = pd.DataFrame({
@@ -49,4 +54,4 @@ def test_borough_count_empty():
 
 
 
-    
+

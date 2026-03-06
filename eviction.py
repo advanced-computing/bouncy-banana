@@ -1,5 +1,5 @@
-import requests
 import pandas as pd
+import requests
 
 # Second Dataset
 
@@ -11,7 +11,7 @@ def eviction():
     limit = 1000
     offset = 0
     loop = True
-    while loop == True:
+    while loop:
         params = {"$limit": limit, "$offset": offset}
         r = requests.get(url, params = params)
         data =r.json()
@@ -20,7 +20,7 @@ def eviction():
 
         if len(data) < limit:
             loop = False
-        
+
         offset += limit
     eviction_data_clean = eviction_data[["executed_date","borough"]]
     eviction_data_clean["executed_date"] = pd.to_datetime(eviction_data_clean["executed_date"])
@@ -29,5 +29,5 @@ def eviction():
 
 def borough_count(eviction_data_clean):
     eviction_data_group = eviction_data_clean.groupby("borough").size().reset_index(name = "Count")
-    
+
     return eviction_data_group
