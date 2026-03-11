@@ -12,12 +12,20 @@ st.divider()
 
 st.header("Project Proposal")
 st.markdown(
-    "test",
-    unsafe_allow_html=False,
-    help=None,
-    width="auto",
-    text_alignment="left",
-    background="CAE7D3",
+    """
+    <div style="
+        background-color:#CAE7D3;
+        padding:20px;
+        border-radius:8px;
+        border-left:6px solid #2E6F40;
+        font-size:17px;
+    ">
+        This project explores unemployment trends in New York City using data from FRED.
+        We analyze both initial unemployment claims and continued claims over time
+        to understand how economic shocks affect the labor market.
+    </div>
+    """,
+    unsafe_allow_html=True,
 )
 
 st.header("Unemployment Claims in New York City OVer Time")
