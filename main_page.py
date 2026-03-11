@@ -51,7 +51,20 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
-st.line_chart(claims_df, x="Date", y="Claims")
+
+# Date range slider
+start_date, end_date = st.slider(
+    "Select Date Range",
+    min_value=claims_df["Date"].min(),
+    max_value=claims_df["Date"].max(),
+    value=(claims_df["Date"].min(), claims_df["Date"].max()),
+)
+
+# Filter data
+filtered_claims = claims_df[(claims_df["Date"] >= start_date) & (claims_df["Date"] <= end_date)]
+
+# Plot filtered chart
+st.line_chart(filtered_claims, x="Date", y="Claims")
 
 st.divider()
 
@@ -73,4 +86,16 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
-st.line_chart(continued_claims_df.set_index("Date")["Continued Claims"])
+
+start_date2, end_date2 = st.slider(
+    "Select Date Range for Continued Claims",
+    min_value=continued_claims_df["Date"].min(),
+    max_value=continued_claims_df["Date"].max(),
+    value=(continued_claims_df["Date"].min(), continued_claims_df["Date"].max()),
+)
+
+filtered_continued = continued_claims_df[
+    (continued_claims_df["Date"] >= start_date2) & (continued_claims_df["Date"] <= end_date2)
+]
+
+st.line_chart(filtered_continued, x="Date", y="Continued Claims")
