@@ -20,16 +20,18 @@ def eviction():
         clean_pop = pd.json_normalize(data)
         eviction_data = pd.concat([eviction_data, clean_pop])
 
-       # if len(data) < limit:
-       #     loop = False
+        # if len(data) < limit:
+        #     loop = False
         offset += limit
         count += 1
-    eviction_data_clean = eviction_data[["executed_date","borough"]]
+    eviction_data_clean = eviction_data[["executed_date", "borough"]]
     eviction_data_clean["executed_date"] = pd.to_datetime(eviction_data_clean["executed_date"])
-    eviction_data_clean["longitude"] = pd.to_numeric(eviction_data_clean["longitude"],
-                                                      errors = "coerce")
-    eviction_data_clean["latitude"] = pd.to_numeric(eviction_data_clean["latitiud"],
-                                                     errors = "coerce")
+    eviction_data_clean["longitude"] = pd.to_numeric(
+        eviction_data_clean["longitude"], errors="coerce"
+    )
+    eviction_data_clean["latitude"] = pd.to_numeric(
+        eviction_data_clean["latitiud"], errors="coerce"
+    )
     return eviction_data_clean
 
 
