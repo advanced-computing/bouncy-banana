@@ -11,8 +11,14 @@ st.subheader("Advanced Computing for Policy, Spring 2026 | Sophia Cain and Samue
 st.divider()
 
 st.header("Project Proposal")
-st.markdown("test", unsafe_allow_html=False, *, help=None, width="auto", 
-            text_alignment="left", background="CAE7D3")
+st.markdown(
+    "test",
+    unsafe_allow_html=False,
+    help=None,
+    width="auto",
+    text_alignment="left",
+    background="CAE7D3",
+)
 
 st.header("Unemployment Claims in New York City OVer Time")
 st.line_chart(claims_df, x="Date", y="Claims")
