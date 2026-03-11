@@ -54,6 +54,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+
 start_date, end_date = st.slider(
     "Select Date Range",
     min_value=claims_df["Date"].min(),
@@ -67,6 +68,7 @@ st.line_chart(filtered_claims, x="Date", y="Claims")
 st.divider()
 
 continued_claims_df = fetch_fred("NYCCLAIMS", fred_key, "Continued Claims")
+continued_claims_df["Date"] = pd.to_datetime(continued_claims_df["Date"]).dt.date
 st.header("Continued Unemployment Claims in New York City")
 st.text("NYC Open Data")
 st.markdown(
