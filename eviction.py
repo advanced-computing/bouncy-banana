@@ -12,7 +12,8 @@ def eviction():
     limit = 1000
     offset = 0
     count = 0
-    while count != 4:
+    max_page = 4
+    while count != max_page:
         params = {"$limit": limit, "$offset": offset}
         r = requests.get(url, params=params)
         data = r.json()
