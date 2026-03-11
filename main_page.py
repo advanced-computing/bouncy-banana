@@ -1,5 +1,3 @@
-import pandas as pd
-import requests
 import streamlit as st
 
 from fred import fetch_fred
