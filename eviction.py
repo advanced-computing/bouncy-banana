@@ -10,18 +10,19 @@ def eviction():
     url = "https://data.cityofnewyork.us/resource/6z8x-wfk4.json"
     limit = 1000
     offset = 0
-    loop = True
-    while loop == True:
+    count = 0
+    while count != 4:
         params = {"$limit": limit, "$offset": offset}
         r = requests.get(url, params = params)
         data =r.json()
         clean_pop = pd.json_normalize(data)
         eviction_data = pd.concat([eviction_data,clean_pop])
 
-        if len(data) < limit:
-            loop = False
+       # if len(data) < limit:
+       #     loop = False
         
         offset += limit
+        count += 1
     eviction_data_clean = eviction_data[["executed_date","borough"]]
     eviction_data_clean["executed_date"] = pd.to_datetime(eviction_data_clean["executed_date"])
 
