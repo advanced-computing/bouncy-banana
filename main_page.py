@@ -87,6 +87,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+
 start_date2, end_date2 = st.slider(
     "Select Date Range for Continued Claims",
     min_value=continued_claims_df["Date"].min(),
