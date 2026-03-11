@@ -1,9 +1,11 @@
+import pandas as pd
 import streamlit as st
 
 from fred import fetch_fred
 
 fred_key = "aa9cd57aae80525dc171dbc517b39546"
 claims_df = fetch_fred("NYICLAIMS", fred_key, "Claims")
+claims_df["Date"] = pd.to_datetime(claims_df["Date"]).dt.date
 
 st.title("Exploring Unemployment in New York City")
 st.text("Advanced Computing for Policy, Spring 2026 | Sophia Cain and Samuel Fu")
@@ -52,7 +54,6 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# Date range slider
 start_date, end_date = st.slider(
     "Select Date Range",
     min_value=claims_df["Date"].min(),
@@ -60,10 +61,7 @@ start_date, end_date = st.slider(
     value=(claims_df["Date"].min(), claims_df["Date"].max()),
 )
 
-# Filter data
 filtered_claims = claims_df[(claims_df["Date"] >= start_date) & (claims_df["Date"] <= end_date)]
-
-# Plot filtered chart
 st.line_chart(filtered_claims, x="Date", y="Claims")
 
 st.divider()
