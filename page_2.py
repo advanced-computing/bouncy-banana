@@ -21,6 +21,5 @@ for _i, r in eviction_data.iterrows():
     ).add_to(marker_cluster)
 
 st.title("NYC Eviction Data")
-st.sidebar.markdown("Page 2")
 
 st_folium(nyc_map, width=700)
