@@ -5,7 +5,7 @@ from fred import fetch_fred
 
 fred_key = "aa9cd57aae80525dc171dbc517b39546"
 claims_df = fetch_fred("NYICLAIMS", fred_key, "Claims")
-claims_df["Date"] = pd.to_datetime(claims_df["Date"]).dt.date
+claims_df["Date"] = pd.to_datetime(claims_df["Date"])
 
 st.title("Exploring Unemployment in New York City")
 st.text("Advanced Computing for Policy, Spring 2026 | Sophia Cain and Samuel Fu")
@@ -68,7 +68,7 @@ st.line_chart(filtered_claims, x="Date", y="Claims")
 st.divider()
 
 continued_claims_df = fetch_fred("NYCCLAIMS", fred_key, "Continued Claims")
-continued_claims_df["Date"] = pd.to_datetime(continued_claims_df["Date"]).dt.date
+continued_claims_df["Date"] = pd.to_datetime(continued_claims_df["Date"])
 st.header("Continued Unemployment Claims in New York City")
 st.text("NYC Open Data")
 st.markdown(
