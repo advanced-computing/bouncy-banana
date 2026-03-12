@@ -1,7 +1,7 @@
 import folium
 import streamlit as st
-from streamlit_folium import st_folium
 from folium.plugins import MarkerCluster
+from streamlit_folium import st_folium
 
 from eviction import borough_count, eviction
 
