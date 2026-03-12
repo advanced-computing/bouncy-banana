@@ -2,3 +2,5 @@ pandas
 jupyter==1.*
 plotly
 pytest-cov
+folium
+streamlit-folium
