@@ -57,9 +57,9 @@ st.markdown(
 
 start_date, end_date = st.slider(
     "Select Date Range",
-    min_value=claims_df["Date"].min(),
-    max_value=claims_df["Date"].max(),
-    value=(claims_df["Date"].min(), claims_df["Date"].max()),
+    min_value=claims_df["Date"].min().to_pydatetime(),
+    max_value=claims_df["Date"].max().to_pydatetime(),
+    value=(claims_df["Date"].min().to_pydatetime(), claims_df["Date"].max().to_pydatetime()),
 )
 
 filtered_claims = claims_df[(claims_df["Date"] >= start_date) & (claims_df["Date"] <= end_date)]
@@ -90,9 +90,9 @@ st.markdown(
 
 start_date2, end_date2 = st.slider(
     "Select Date Range for Continued Claims",
-    min_value=continued_claims_df["Date"].min(),
-    max_value=continued_claims_df["Date"].max(),
-    value=(continued_claims_df["Date"].min(), continued_claims_df["Date"].max()),
+    min_value=continued_claims_df["Date"].min().to_pydatetime(),
+    max_value=continued_claims_df["Date"].max().to_pydatetime(),
+    value=(continued_claims_df["Date"].min().to_pydatetime(), continued_claims_df["Date"].max().to_pydatetime()),
 )
 
 filtered_continued = continued_claims_df[
