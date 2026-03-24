@@ -30,7 +30,7 @@ con.close()
 
 # Write to BigQuery
 pandas_gbq.to_gbq(
-    df, f"{DATASET}.{TABLE}", project_id=PROJECT_ID, if_exists="replace", credentials=credentials
+    df, f"{DATASET}.{TABLE}", project_id=PROJECT_ID, if_exists="append", credentials=credentials
 )
 
 # Read back from BigQuery to verify
