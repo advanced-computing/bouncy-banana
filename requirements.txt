@@ -5,4 +5,4 @@ folium
 streamlit-folium
 streamlit>=1.32,<2
 pytest-cov
-google-cloud-bigquery
+db-dtypes
