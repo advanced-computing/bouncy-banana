@@ -1,13 +1,21 @@
 import pandas as pd
+import streamlit as st
 from google.cloud import bigquery
+from google.oauth2 import service_account
 
 # Second Dataset
-
 # https://data.cityofnewyork.us/City-Government/Evictions/6z8x-wfk4/about_data
+
+credentials = service_account.Credentials.from_service_account_info(
+    st.secrets["gcp_service_account"]
+)
 
 
 def eviction():
-    client = bigquery.Client()
+    client = bigquery.Client(
+        credentials=credentials,
+        project=credentials.project_id,
+    )
 
     query = """
         SELECT
