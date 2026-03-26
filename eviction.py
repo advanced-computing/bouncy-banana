@@ -27,6 +27,7 @@ def eviction():
 
     return eviction_data
 
+
 def borough_count(eviction_data_clean):
     eviction_data_group = eviction_data_clean.groupby("borough").size().reset_index(name="Count")
 
