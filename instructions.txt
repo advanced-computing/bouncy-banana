@@ -1,0 +1,5 @@
+So the main page and page 2 connect our app to streamlit. 
+So if they want to contribute they have to create new py file, 
+load data from an api,
+ add that data to a table use SQL/DuckDB, and then we send that table to BigQuery. 
+ And then they add that database to the streamlit pages. 

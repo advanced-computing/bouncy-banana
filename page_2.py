@@ -1,6 +1,6 @@
-import folium
 import streamlit as st
-from streamlit_folium import st_folium
+import pydeck as pdk
+import pandas as pd
 
 from eviction import borough_count, eviction
 
@@ -11,14 +11,30 @@ borough_count_clean = borough_count(eviction_data)
 
 st.bar_chart(borough_count_clean, x="borough", y="Count")
 
-nyc_map = folium.Map(location=[40.7128, -74.0060], zoom_start=11)
+df = eviction_data.copy()
+df["latitude"] = pd.to_numeric(df["latitude"], errors="coerce")
+df["longitude"] = pd.to_numeric(df["longitude"], errors="coerce")
+df = df.dropna(subset=["latitude", "longitude"])
 
-for _i, r in eviction_data.iterrows():
-    folium.Marker(
-        location=[r["latitude"], r["longitude"]], popup=r["eviction_address"], tooltip="Eviction"
-    ).add_to(nyc_map)
+layer = pdk.Layer(
+    "HeatmapLayer",
+    data=df,
+    get_position="[longitude, latitude]",
+    radius_pixels=20,
+    intensity=1,
+    threshold=0.03,
+    opacity=0.8,
+)
 
-st.title("NYC Eviction Data")
-st.sidebar.markdown("Page 2")
+deck = pdk.Deck(
+    layers=[layer],
+    initial_view_state=pdk.ViewState(
+        latitude=40.7128,
+        longitude=-74.0060,
+        zoom=9.5,
+    ),
+    map_provider="carto",
+    map_style="light",
+)
 
-st_folium(nyc_map, width=700)
+st.pydeck_chart(deck)
