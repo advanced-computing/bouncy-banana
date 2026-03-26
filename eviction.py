@@ -1,6 +1,6 @@
 import pandas as pd
-import requests
 from google.cloud import bigquery
+
 # Second Dataset
 
 # https://data.cityofnewyork.us/City-Government/Evictions/6z8x-wfk4/about_data
