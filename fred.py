@@ -12,7 +12,7 @@ def fetch_fred(series_id, api_key, column_name):
         "frequency": "w",
     }
 
-    r = requests.get(url, params=params)
+    r = requests.get(url, params=params, timeout=10)
     data = r.json()
 
     df = pd.DataFrame(data["observations"])
