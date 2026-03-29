@@ -1,7 +1,7 @@
 import streamlit as st
 
-main_page = st.Page("main_page.py", title="Main Page")
-page_2 = st.Page("page_2.py", title="Page 2")
+main_page = st.Page("Project_Overview.py", title="Main Page")
+page_2 = st.Page("1_NYC_Unemployment.py", title="NYC Unemployment")
 
 pg = st.navigation([main_page, page_2])
 pg.run()
