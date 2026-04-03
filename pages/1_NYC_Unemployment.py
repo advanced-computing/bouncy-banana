@@ -116,7 +116,7 @@ with display_load_time():
 
     nyc_map = folium.Map(location=[40.7128, -74.0060], zoom_start=11)
 
-    points = eviction_data[["latitude", "longitude"]].values.tolist()
+    points = eviction_data[["latitude", "longitude"]].to_numpy().tolist()
 
     nyc_map = folium.Map(location=[40.7128, -74.0060], zoom_start=11)
     FastMarkerCluster(points).add_to(nyc_map)
