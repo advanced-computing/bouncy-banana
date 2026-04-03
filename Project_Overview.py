@@ -39,11 +39,16 @@ with display_load_time():
             border-left:6px solid #2E6F40;
             font-size:17px;
         ">
-            This project explores unemployment trends in New York City using data from  Federal Reserve
-            Economic Data (FRED) and NYC Open Data. We analyze both initial unemployment claims and
-            continued claims over time to understand how unemployment effects New Yorkers in the short-
-            and long-term. We are introducing more data from NYC Open Data to explore the relationship
-            between unemployment and health. We will also introduce a geographical component to this
+            This project explores unemployment trends in 
+            New York City using data from  Federal Reserve
+            Economic Data (FRED) and NYC Open Data. 
+            We analyze both initial unemployment claims and
+            continued claims over time to understand how 
+            unemployment effects New Yorkers in the short-
+            and long-term. We are introducing more 
+            data from NYC Open Data to explore the relationship
+            between unemployment and health. 
+            We will also introduce a geographical component to this
             data in the coming weeks. Stay tuned for updates!
         </div>
         """,

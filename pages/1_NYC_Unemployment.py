@@ -55,7 +55,8 @@ with display_load_time():
             border-left:6px solid #2E6F40;
             font-size:17px;
         ">
-            This graph shows overall total unemployment claims made in NYC from 1986 to 2019 across the
+            This graph shows overall total unemployment claims made 
+            in NYC from 1986 to 2019 across the
             five boroughs.
         </div>
         """,
@@ -87,8 +88,10 @@ with display_load_time():
             border-left:6px solid #2E6F40;
             font-size:17px;
         ">
-            This graph shows overall total continued unemployment claims (claims made after the inital
-            unemployment filing made in NYC from 1986 to 2019 across the five boroughs.
+            This graph shows overall total continued unemployment claims 
+            (claims made after the inital
+            unemployment filing made in NYC from 
+            1986 to 2019 across the five boroughs.
         </div>
         """,
         unsafe_allow_html=True,
