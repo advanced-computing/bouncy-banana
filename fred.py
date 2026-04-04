@@ -1,5 +1,6 @@
 import pandas as pd
 import requests
+from google.cloud import bigquery
 
 
 def fetch_fred(series_id, api_key, column_name):
@@ -21,4 +22,20 @@ def fetch_fred(series_id, api_key, column_name):
     df = df.drop(columns=["date", "value", "realtime_start", "realtime_end"])
     df = df.dropna()
 
+    return df
+
+
+def fred_from_bigquery(credentials, table_name):
+    client = bigquery.Client(
+        credentials=credentials,
+        project="sipa-adv-c-bouncy-banana",
+    )
+
+    query = """
+        SELECT *
+        FROM `sipa-adv-c-bouncy-banana.new_insurance.continued_insurance_table`
+    """
+
+    df = client.query(query).to_dataframe()
+    df["Date"] = pd.to_datetime(df["Date"])
     return df
