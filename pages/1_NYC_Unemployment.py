@@ -3,22 +3,29 @@ from contextlib import contextmanager
 
 import folium
 import pandas as pd
-import pydata_google_auth
+
+# import pydata_google_auth
 import streamlit as st
 from folium.plugins import FastMarkerCluster
+from google.oauth2 import service_account
 from streamlit_folium import st_folium
 
 from eviction import borough_count, eviction
 from fred import fred_from_bigquery
 
-SCOPES = [
-    "https://www.googleapis.com/auth/cloud-platform",
-    "https://www.googleapis.com/auth/drive",
-]
+# SCOPES = [
+#     "https://www.googleapis.com/auth/cloud-platform",
+#     "https://www.googleapis.com/auth/drive",
+# ]
 
-credentials = pydata_google_auth.get_user_credentials(
-    SCOPES,
-    auth_local_webserver=True,
+# credentials = pydata_google_auth.get_user_credentials(
+#     SCOPES,
+#     auth_local_webserver=True,
+# )
+
+credentials = service_account.Credentials.from_service_account_info(
+    st.secrets["gcp_service_account"],
+    scopes=["https://www.googleapis.com/auth/cloud-platform"],
 )
 
 
