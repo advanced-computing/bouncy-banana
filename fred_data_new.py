@@ -15,9 +15,13 @@ SCOPES = [
     "https://www.googleapis.com/auth/drive",
 ]
 
-credentials = pydata_google_auth.get_user_credentials(
-    SCOPES,
-    auth_local_webserver=True,
+import json
+
+from google.oauth2 import service_account
+
+credentials = service_account.Credentials.from_service_account_info(
+    json.loads(os.environ["BQ_BOUNCY_BANANA"]),
+    scopes=SCOPES,
 )
 
 # Load and clean data
