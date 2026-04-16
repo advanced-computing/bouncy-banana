@@ -6,8 +6,8 @@ def apply_global_styles():
         """
         <style>
             .main .block-container {
-                padding-left: 5rem;
-                padding-right: 5rem;
+                padding-left: 2rem;
+                padding-right: 2rem;
                 max-width: 100%;
             }
         </style>
