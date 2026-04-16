@@ -1,17 +1,8 @@
 import streamlit as st
 
-# Global styles and any shared config
-st.set_page_config(layout="wide")  # if you have this
+page_1 = st.Page("pages/1_Project_Overview.py", title="Project Overview")
+page_2 = st.Page("pages/2_NYC_Unemployment.py", title="NYC Unemployment")
+page_3 = st.Page("pages/3_NYC_Evictions.py", title="NYC Evictions")
 
-st.markdown(
-    """
-    <style>
-        .main .block-container {
-            padding-left: 5rem;
-            padding-right: 5rem;
-            max-width: 100%;
-        }
-    </style>
-""",
-    unsafe_allow_html=True,
-)
+pg = st.navigation([page_1, page_2, page_3])
+pg.run()
