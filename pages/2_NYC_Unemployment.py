@@ -46,10 +46,10 @@ with display_load_time():
     st.markdown(
         """
         <div style="
-            background-color:#CAE7D3;
+            background-color:#FFE6EE;
             padding:20px;
             border-radius:8px;
-            border-left:6px solid #2E6F40;
+            border-left:6px solid #FFD1DF;
             font-size:17px;
         ">
             This graph shows overall total unemployment claims made
@@ -79,10 +79,10 @@ with display_load_time():
     st.markdown(
         """
         <div style="
-            background-color:#CAE7D3;
+            background-color:#FFE6EE;
             padding:20px;
             border-radius:8px;
-            border-left:6px solid #2E6F40;
+            border-left:6px solid #FFD1DF;
             font-size:17px;
         ">
             This graph shows overall total continued unemployment claims
