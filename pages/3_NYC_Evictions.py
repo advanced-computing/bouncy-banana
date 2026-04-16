@@ -5,8 +5,11 @@ import folium
 import streamlit as st
 from folium.plugins import FastMarkerCluster
 from streamlit_folium import st_folium
+from utils.styles import apply_global_styles
 
 from eviction import borough_count, eviction
+
+apply_global_styles()
 
 
 @st.cache_data(ttl=3600)

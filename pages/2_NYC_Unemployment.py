@@ -2,12 +2,13 @@ import time
 from contextlib import contextmanager
 
 import pandas as pd
-
-# import pydata_google_auth
 import streamlit as st
 from google.oauth2 import service_account
+from utils.styles import apply_global_styles
 
 from fred import fred_from_bigquery
+
+apply_global_styles()
 
 # SCOPES = [
 #     "https://www.googleapis.com/auth/cloud-platform",
