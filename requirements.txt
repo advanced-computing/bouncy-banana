@@ -1,5 +1,6 @@
 pandas
 plotly
+duckdb
 requests
 folium
 streamlit-folium
