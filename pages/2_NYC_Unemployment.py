@@ -4,9 +4,9 @@ from contextlib import contextmanager
 import pandas as pd
 import streamlit as st
 from google.oauth2 import service_account
-from utils.styles import apply_global_styles
 
 from fred import fred_from_bigquery
+from utils.styles import apply_global_styles
 
 apply_global_styles()
 
