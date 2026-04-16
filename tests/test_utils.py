@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 
-from utils import borough_count, health_year_filter
+from tests.utils import borough_count, health_year_filter
 
 
 def test_health_year_filter():

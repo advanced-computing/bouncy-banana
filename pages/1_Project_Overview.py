@@ -4,7 +4,7 @@ from contextlib import contextmanager
 import pandas as pd
 import streamlit as st
 
-from fred import fetch_fred
+from functions.fred import fetch_fred
 
 
 @contextmanager

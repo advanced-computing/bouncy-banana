@@ -10,8 +10,8 @@ from folium.plugins import FastMarkerCluster
 from google.oauth2 import service_account
 from streamlit_folium import st_folium
 
-from eviction import borough_count, eviction
-from fred import fred_from_bigquery
+from functions.eviction import borough_count, eviction
+from functions.fred import fred_from_bigquery
 
 # SCOPES = [
 #     "https://www.googleapis.com/auth/cloud-platform",
