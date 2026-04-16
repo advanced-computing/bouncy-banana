@@ -1,17 +1,14 @@
 import time
 from contextlib import contextmanager
 
-import folium
 import pandas as pd
-
-# import pydata_google_auth
 import streamlit as st
-from folium.plugins import FastMarkerCluster
 from google.oauth2 import service_account
-from streamlit_folium import st_folium
+from utils.styles import apply_global_styles
 
-from eviction import borough_count, eviction
 from fred import fred_from_bigquery
+
+apply_global_styles()
 
 # SCOPES = [
 #     "https://www.googleapis.com/auth/cloud-platform",
@@ -27,13 +24,6 @@ credentials = service_account.Credentials.from_service_account_info(
     st.secrets["gcp_service_account"],
     scopes=["https://www.googleapis.com/auth/cloud-platform"],
 )
-
-
-@st.cache_data(ttl=3600)
-def load_eviction_data():
-    df = eviction()
-    df = df.dropna(subset=["latitude", "longitude"])
-    return df
 
 
 @contextmanager
@@ -121,18 +111,3 @@ with display_load_time():
     st.line_chart(filtered_continued, x="Date", y="Claims")
 
     st.divider()
-
-    eviction_data = load_eviction_data()
-
-    nyc_map = folium.Map(location=[40.7128, -74.0060], zoom_start=11)
-
-    points = eviction_data[["latitude", "longitude"]].to_numpy().tolist()
-
-    nyc_map = folium.Map(location=[40.7128, -74.0060], zoom_start=11)
-    FastMarkerCluster(points).add_to(nyc_map)
-
-    st.title("NYC Eviction Data")
-    st_folium(nyc_map, width=700)
-
-    borough_count_clean = borough_count(eviction_data)
-    st.bar_chart(borough_count_clean, x="borough", y="Count")
