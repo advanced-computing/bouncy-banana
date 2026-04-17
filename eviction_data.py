@@ -25,7 +25,7 @@ df = eviction()
 # Inspect locally with DuckDB before sending to BigQuery
 con = duckdb.connect()
 con.execute("CREATE TABLE eviction_table AS SELECT * FROM df")
-print(con.sql("SELECT * FROM eviction_table").fetchdf())
+print(con.sql("SELECT * FROM eviction_table").fetchdf().columns.tolist())
 con.close()
 
 # Write to BigQuery

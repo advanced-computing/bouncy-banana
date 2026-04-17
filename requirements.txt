@@ -2,11 +2,11 @@ pandas
 plotly
 duckdb
 requests
-folium
-streamlit-folium
 streamlit>=1.32,<2
 pytest-cov
 db-dtypes
 google-cloud-bigquery
 google-auth
 pandas-gbq
+streamlit-folium==0.22.0
+folium==0.19.0
