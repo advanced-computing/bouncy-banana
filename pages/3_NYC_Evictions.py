@@ -21,18 +21,45 @@ def load_eviction_data():
 
 eviction_data = load_eviction_data()
 
+st.title("Evictions and Unemployment in NYC (2017-Present)")
+
+st.markdown(
+    """
+    <div style="
+        background-color:#93b9e1;
+        padding:20px;
+        border-radius:8px;
+        border-left:6px solid #0f0f59;
+        font-size:17px;
+        color: 93b9e1;
+    ">
+        This page explores the relationship between unemployment and housing
+        evictions in New York City over time. Our data on evictions in New York City
+        comes from NYC Open Data and spans across the five boroughs from 2017 to present.
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
+st.divider()
+
+st.subheader("NYC Evictions 2017-Present by Geography")
+
+
 nyc_map = folium.Map(location=[40.7128, -74.0060], zoom_start=11)
 
 points = eviction_data[["latitude", "longitude"]].to_numpy().tolist()
 
-nyc_map = folium.Map(location=[40.7128, -74.0060], zoom_start=11)
 FastMarkerCluster(points).add_to(nyc_map)
 
-st.title("NYC Eviction Data")
 st_folium(nyc_map, width=700)
 
+st.subheader("NYC Evictions 2017-Present by Count")
+
 borough_count_clean = borough_count(eviction_data)
-st.bar_chart(borough_count_clean, x="borough", y="Count")
+st.bar_chart(borough_count_clean, x="borough", y="Count", x_label="NYC Borough", y_label="Total")
+
+st.divider()
 
 
 @contextmanager
