@@ -10,16 +10,6 @@ from utils.styles import apply_global_styles
 
 apply_global_styles()
 
-# SCOPES = [
-#     "https://www.googleapis.com/auth/cloud-platform",
-#     "https://www.googleapis.com/auth/drive",
-# ]
-
-# credentials = pydata_google_auth.get_user_credentials(
-#     SCOPES,
-#     auth_local_webserver=True,
-# )
-
 credentials = service_account.Credentials.from_service_account_info(
     st.secrets["gcp_service_account"],
     scopes=["https://www.googleapis.com/auth/cloud-platform"],
