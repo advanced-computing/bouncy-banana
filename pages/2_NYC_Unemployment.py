@@ -5,7 +5,7 @@ import pandas as pd
 import streamlit as st
 from google.oauth2 import service_account
 
-from fred import fred_from_bigquery
+from fred_data import fred_from_bigquery
 from utils.styles import apply_global_styles
 
 apply_global_styles()

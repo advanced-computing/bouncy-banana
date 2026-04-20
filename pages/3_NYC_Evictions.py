@@ -1,33 +1,20 @@
 import time
 from contextlib import contextmanager
 
-import folium
-import pandas as pd
-import plotly.graph_objects as go
+import pydeck as pdk
 import streamlit as st
-from folium.plugins import FastMarkerCluster
-from google.oauth2 import service_account
-from streamlit_folium import st_folium
 
-from eviction import borough_count, eviction
-from fred import fred_from_bigquery
+from eviction_bq import borough_count, eviction
 from utils.styles import apply_global_styles
 
+st.set_page_config(layout="wide")
 apply_global_styles()
 
-# SCOPES = [
-#     "https://www.googleapis.com/auth/cloud-platform",
-#     "https://www.googleapis.com/auth/drive",
-# ]
-
-# credentials = pydata_google_auth.get_user_credentials(
-#     SCOPES,
-#     auth_local_webserver=True,
-# )
-
-credentials = service_account.Credentials.from_service_account_info(
-    st.secrets["gcp_service_account"],
-    scopes=["https://www.googleapis.com/auth/cloud-platform"],
+# configure browser tab
+st.set_page_config(
+    page_title="NYC Evictions & Unemployment",
+    page_icon="🗽",
+    layout="wide",
 )
 
 
@@ -40,110 +27,158 @@ def load_eviction_data():
 
 eviction_data = load_eviction_data()
 
-st.title("Evictions and Unemployment in NYC (2017-Present)")
+# --- Sidebar Filters ---
+st.sidebar.header("Filters")
 
-st.markdown(
-    """
-    <div style="
-        background-color:#93b9e1;
-        padding:20px;
-        border-radius:8px;
-        border-left:6px solid #0f0f59;
-        font-size:17px;
-        color: 93b9e1;
-    ">
-        This page explores the relationship between unemployment and housing
-        evictions in New York City over time. Our data on evictions in New York City
-        comes from NYC Open Data and spans across the five boroughs from 2017 to present.
-    </div>
-    """,
-    unsafe_allow_html=True,
+boroughs = sorted(eviction_data["borough"].dropna().unique().tolist())
+selected_boroughs = st.sidebar.multiselect("Borough", boroughs, default=boroughs)
+
+min_date = eviction_data["executed_date"].min().date()
+max_date = eviction_data["executed_date"].max().date()
+
+date_range = st.sidebar.date_input(
+    "Date Range",
+    value=(min_date, max_date),
+    min_value=min_date,
+    max_value=max_date,
 )
 
-st.divider()
+if st.sidebar.button("Clear Date Range"):
+    st.session_state["date_range"] = (min_date, max_date)
 
-st.subheader("NYC Evictions 2017-Present by Geography")
+# Apply filters
+filtered = eviction_data[eviction_data["borough"].isin(selected_boroughs)]
+if len(date_range) == 2:
+    start_date, end_date = date_range
+    filtered = filtered[
+        (filtered["executed_date"].dt.date >= start_date)
+        & (filtered["executed_date"].dt.date <= end_date)
+    ]
 
+# --- Page Title ---
+st.title("NYC Eviction Data")
 
-nyc_map = folium.Map(location=[40.7128, -74.0060], zoom_start=11)
+# --- Summary Metrics ---
+col1, col2, col3 = st.columns(3)
+col1.metric("Total Evictions", f"{len(filtered):,}")
 
-points = eviction_data[["latitude", "longitude"]].to_numpy().tolist()
-
-FastMarkerCluster(points).add_to(nyc_map)
-
-st_folium(nyc_map, width=700)
-
-
-st.subheader("NYC Evictions 2017-Present by Count")
-
-borough_count_clean = borough_count(eviction_data)
-st.bar_chart(
-    borough_count_clean,
-    x="borough",
-    y="Count",
-    color="#0f0f59",
-    x_label="NYC Borough",
-    y_label="Total",
-)
-
-st.divider()
-
-st.subheader("Evictions vs Unemployment Claims in NYC")
-
-boroughs = ["All"] + list(eviction_data["borough"].unique())
-selected_borough = st.selectbox("Filter by Borough", boroughs)
-
-if selected_borough != "All":
-    filtered_evictions = eviction_data[eviction_data["borough"] == selected_borough]
+if not filtered.empty:
+    top_borough = filtered.groupby("borough").size().idxmax()
 else:
-    filtered_evictions = eviction_data
+    top_borough = "N/A"
 
-# Aggregate evictions by date (assuming eviction_data has a date column)
-eviction_data["year"] = pd.to_datetime(eviction_data["executed_date"]).dt.year
-evictions_by_year = eviction_data.groupby("year").size().reset_index(name="Evictions")
+col2.metric("Most Affected Borough", top_borough)
 
-claims_df = fred_from_bigquery(credentials, "new_insurance_table")
-claims_df["Date"] = pd.to_datetime(claims_df["Date"])
-
-# Aggregate claims by year
-claims_df["year"] = claims_df["Date"].dt.year
-claims_by_year = claims_df.groupby("year")["Claims"].sum().reset_index()
-
-# Merge on year
-merged = evictions_by_year.merge(claims_by_year, on="year")
-
-fig = go.Figure()
-
-fig.add_trace(
-    go.Bar(
-        x=merged["year"],
-        y=merged["Evictions"],
-        name="Evictions",
-        marker_color="#0f0f59",
-        yaxis="y1",
+if not filtered.empty:
+    date_label = (
+        f"{filtered['executed_date'].min().strftime('%b %Y')} – "
+        f"{filtered['executed_date'].max().strftime('%b %Y')}"
     )
-)
+else:
+    date_label = "N/A"
+col3.metric("Date Range", date_label)
 
-fig.add_trace(
-    go.Scatter(
-        x=merged["year"],
-        y=merged["Claims"],
-        name="Unemployment Claims",
-        line=dict(color="#93b9e1", width=3),
-        yaxis="y2",
+# --- Tabs ---
+tab_map, tab_trends, tab_borough, tab_data = st.tabs(["Map", "Trends", "By Borough", "Raw Data"])
+
+with tab_map:
+    # One HexagonLayer per borough, each with its own color ramp
+    BOROUGH_COLOR_RANGES = {
+        "BRONX": [[254, 229, 217], [252, 174, 145], [251, 106, 74], [222, 45, 38], [165, 15, 21]],
+        "BROOKLYN": [
+            [239, 243, 255],
+            [189, 215, 231],
+            [107, 174, 214],
+            [49, 130, 189],
+            [8, 81, 156],
+        ],
+        "MANHATTAN": [
+            [242, 240, 247],
+            [203, 201, 226],
+            [158, 154, 200],
+            [117, 107, 177],
+            [63, 0, 125],
+        ],
+        "QUEENS": [[237, 248, 233], [186, 228, 179], [116, 196, 118], [49, 163, 84], [0, 109, 44]],
+        "STATEN ISLAND": [
+            [255, 255, 212],
+            [254, 217, 142],
+            [254, 153, 41],
+            [217, 95, 14],
+            [153, 52, 4],
+        ],
+    }
+
+    layers = [
+        pdk.Layer(
+            "HexagonLayer",
+            data=filtered[filtered["borough"].str.upper() == borough],
+            get_position=["longitude", "latitude"],
+            radius=300,
+            elevation_scale=4,
+            elevation_range=[0, 500],
+            extruded=True,
+            pickable=True,
+            color_range=color_range,
+        )
+        for borough, color_range in BOROUGH_COLOR_RANGES.items()
+        if not filtered[filtered["borough"].str.upper() == borough].empty
+    ]
+
+    st.pydeck_chart(
+        pdk.Deck(
+            layers=layers,
+            initial_view_state=pdk.ViewState(
+                latitude=40.7128,
+                longitude=-74.0060,
+                zoom=10,
+                pitch=40,
+                min_zoom=9,
+                max_zoom=14,
+            ),
+            map_style="light",
+            tooltip={"text": "Evictions: {elevationValue}"},
+            views=[
+                pdk.View(
+                    type="MapView",
+                    controller={"maxBounds": [[-74.6, 40.4], [-73.6, 41.0]]},
+                )
+            ],
+        )
     )
-)
 
-fig.update_layout(
-    xaxis=dict(title="Year"),
-    yaxis=dict(title="Evictions", side="left"),
-    yaxis2=dict(title="Unemployment Claims", side="right", overlaying="y"),
-    legend=dict(x=0.01, y=0.99),
-    plot_bgcolor="#ffffff",
-    hovermode="x unified",  # shows both values on hover
-)
 
-st.plotly_chart(fig, use_container_width=True)
+with tab_trends:
+    st.subheader("Monthly Evictions Over Time")
+    monthly = (
+        filtered.copy()
+        .set_index("executed_date")
+        .resample("ME")
+        .size()
+        .reset_index(name="Evictions")
+        .rename(columns={"executed_date": "Month"})
+    )
+    if monthly.empty:
+        st.info("No data for selected filters.")
+    else:
+        st.line_chart(monthly, x="Month", y="Evictions")
+
+with tab_borough:
+    st.subheader("Evictions by Borough")
+    borough_df = borough_count(filtered)
+    borough_df["% of Total"] = (borough_df["Count"] / borough_df["Count"].sum() * 100).round(
+        1
+    ).astype(str) + "%"
+    st.bar_chart(borough_df, x="borough", y="Count")
+    st.dataframe(borough_df, width="stretch", hide_index=True)
+
+with tab_data:
+    st.subheader("Eviction Records")
+    display_cols = ["executed_date", "borough", "eviction_address"]
+    st.dataframe(
+        filtered[display_cols].sort_values("executed_date", ascending=False).reset_index(drop=True),
+        width="stretch",
+    )
 
 
 @contextmanager

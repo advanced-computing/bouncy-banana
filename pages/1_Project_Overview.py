@@ -4,7 +4,7 @@ from contextlib import contextmanager
 import pandas as pd
 import streamlit as st
 
-from fred import fetch_fred
+from fred_data import fetch_fred
 from utils.styles import apply_global_styles
 
 apply_global_styles()
