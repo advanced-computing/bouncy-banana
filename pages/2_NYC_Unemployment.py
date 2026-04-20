@@ -25,6 +25,13 @@ credentials = service_account.Credentials.from_service_account_info(
     scopes=["https://www.googleapis.com/auth/cloud-platform"],
 )
 
+# configure browser tab
+st.set_page_config(
+    page_title="NYC Unemployment Dashboard",
+    page_icon="🗽",
+    layout="wide",
+)
+
 
 @contextmanager
 def display_load_time():

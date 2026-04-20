@@ -9,6 +9,13 @@ from utils.styles import apply_global_styles
 
 apply_global_styles()
 
+# configure browser tab
+st.set_page_config(
+    page_title="Project Documentation",
+    page_icon="🗽",
+    layout="wide",
+)
+
 
 @contextmanager
 def display_load_time():
@@ -31,15 +38,14 @@ with display_load_time():
 
     st.divider()
 
-    st.badge("New")
-    st.header("Project Proposal")
+    st.subheader("Project Proposal")
     st.markdown(
         """
         <div style="
-            background-color:#FFE6EE;
+            background-color:#E5F3FD;
             padding:20px;
             border-radius:8px;
-            border-left:6px solid #FFD1DF;
+            border-left:6px solid #9ABDDC;
             font-size:17px;
         ">
             This project explores unemployment trends in
