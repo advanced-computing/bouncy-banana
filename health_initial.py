@@ -21,22 +21,6 @@ def fetch_health_data():
 
         offset += limit
 
-    health_data = health_data.rename(
-        columns={
-            "prevelance": "Prevelance",
-            "q_1": "No Health Insurance",
-            "q_2": "Do not get medical care",
-            "q_3": "No Personal Doctor",
-            "q_4": "Drinks 1 or more sugar-sweetened beverages per day",
-            "q_5": "Smoking Status (current smokers)",
-            "q_6": "Obesity",
-            "q_7": "Binge Drinking",
-            "q_8": "Colon cancer screening, adults age 50+ (colonoscopy)",
-            "q_9": "Self-reported Health Status (excellent/very good/good)",
-            "q_10": "Flu shot in last 12 months, adults ages 65+ (not age-adjusted)",
-        }
-    )
-
     health_data["year"] = health_data["year"].astype(int)
 
     return health_data

@@ -70,6 +70,8 @@ with display_load_time():
     # --- Page Title ---
     st.title("NYC Eviction Data")
 
+    st.divider()
+
     # --- Summary Metrics ---
     col1, col2, col3 = st.columns(3)
     col1.metric("Total Evictions", f"{len(filtered):,}")
