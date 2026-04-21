@@ -9,7 +9,7 @@ from utils.styles import apply_global_styles
 
 DATE_RANGE_LENGTH = 2
 
-# ── MUST be first Streamlit call — only once ──────────────────────────────────
+# configure browser tab
 st.set_page_config(
     page_title="NYC Evictions & Unemployment",
     page_icon="🗽",
@@ -19,6 +19,7 @@ st.set_page_config(
 apply_global_styles()
 
 
+# cache eviction data
 @st.cache_data(ttl=3600)
 def load_eviction_data():
     df = eviction()
