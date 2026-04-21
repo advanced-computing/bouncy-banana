@@ -11,8 +11,7 @@ from utils.styles import apply_global_styles
 apply_global_styles()
 
 credentials = service_account.Credentials.from_service_account_info(
-    st.secrets["gcp_service_account"],
-    scopes=["https://www.googleapis.com/auth/cloud-platform"],
+    st.secrets["gcp_service_account"]
 )
 
 # configure browser tab
@@ -22,7 +21,21 @@ st.set_page_config(
     layout="wide",
 )
 
+apply_global_styles()
 
+
+# cache unemployment data
+@st.cache_data
+def load_fred_data():
+    return fred_from_bigquery(credentials, "new_insurance")
+
+
+@st.cache_data
+def load_fred_continued_data():
+    return fred_from_bigquery(credentials, "continued_insurance_table")
+
+
+# set up page load time
 @contextmanager
 def display_load_time():
     start_time = time.time()
@@ -37,6 +50,49 @@ with display_load_time():
     fred_key = "aa9cd57aae80525dc171dbc517b39546"
     claims_df = fred_from_bigquery(credentials, "new_insurance_table")
     claims_df["Date"] = pd.to_datetime(claims_df["Date"])
+
+    # load cached data
+    fred_data_cache = load_fred_data()
+
+    # change weekly insurance claims to yearly
+    fred_data_cache["year"] = pd.to_datetime(fred_data_cache["Date"]).dt.year
+    fred_yearly = fred_data_cache.groupby("year")["Claims"].sum().reset_index()
+
+    # find peak unemployment year
+    peak_year = int(fred_yearly.loc[fred_yearly["Claims"].idxmax(), "year"])
+    peak_claims = int(fred_yearly.loc[fred_yearly["Claims"].idxmax(), "Claims"])
+
+    st.title("NYC Unemployment Data")
+
+    # summary metrics
+    st.subheader("Key Insights")
+
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        st.metric(
+            label="Peak Unemployment Year",
+            value=f"{peak_year}",
+            delta=f"{peak_claims:,} claims",
+        )
+
+    with col2:
+        latest_year = int(fred_yearly["year"].max())
+        latest_claims = int(fred_yearly.loc[fred_yearly["year"].idxmax(), "Claims"])
+        st.metric(
+            label="Latest Year Claims",
+            value=f"{latest_year}",
+            delta=f"{latest_claims:,} claims",
+        )
+
+    with col3:
+        avg_claims = int(fred_yearly["Claims"].mean())
+        st.metric(
+            label="Average Annual Claims",
+            value=f"{avg_claims:,}",
+            delta="all years",
+        )
+    st.divider()
 
     st.header("Unemployment Claims in New York City")
     st.text("NYC Open Data")
