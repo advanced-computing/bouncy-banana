@@ -2,7 +2,7 @@ import duckdb
 import pandas_gbq
 import pydata_google_auth
 
-from fred import fetch_fred
+from fred_data import fetch_fred
 
 PROJECT_ID = "sipa-adv-c-bouncy-banana"
 DATASET = "new_insurance"

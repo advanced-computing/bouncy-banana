@@ -2,14 +2,13 @@ import duckdb
 import pandas_gbq
 import pydata_google_auth
 
-from fred import fetch_fred
+from health_initial import fetch_health_data
 
 PROJECT_ID = "sipa-adv-c-bouncy-banana"
-DATASET = "new_insurance"
-TABLE = "new_insurance_table"
+DATASET = "health"
+TABLE = "health_table"
 
 # Authenticate
-fred_key = "aa9cd57aae80525dc171dbc517b39546"
 SCOPES = [
     "https://www.googleapis.com/auth/cloud-platform",
     "https://www.googleapis.com/auth/drive",
@@ -20,13 +19,13 @@ credentials = pydata_google_auth.get_user_credentials(
     auth_local_webserver=True,
 )
 
-# Load and clean data
-df = fetch_fred("NYICLAIMS", fred_key, "Claims")
+# Fetch from API
+df = fetch_health_data()
 
 # Inspect locally with DuckDB before sending to BigQuery
 con = duckdb.connect()
-con.execute("CREATE TABLE new_insurance_table AS SELECT * FROM df")
-print(con.sql("SELECT * FROM new_insurance_table").fetchdf())
+con.execute("CREATE TABLE health_table AS SELECT * FROM df")
+print(con.sql("SELECT * FROM health_table").fetchdf().columns.tolist())
 con.close()
 
 # Write to BigQuery
@@ -34,11 +33,4 @@ pandas_gbq.to_gbq(
     df, f"{DATASET}.{TABLE}", project_id=PROJECT_ID, if_exists="append", credentials=credentials
 )
 
-# Read back from BigQuery to verify
-df_new = pandas_gbq.read_gbq(
-    f"SELECT * FROM `{DATASET}.{TABLE}`",
-    project_id=PROJECT_ID,  # variable, not the string "PROJECT_ID"
-    credentials=credentials,
-)
-
-print(df_new)
+print("Upload complete.")

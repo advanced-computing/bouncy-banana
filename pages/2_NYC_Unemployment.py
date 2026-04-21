@@ -5,24 +5,21 @@ import pandas as pd
 import streamlit as st
 from google.oauth2 import service_account
 
-from fred import fred_from_bigquery
+from fred_data import fred_from_bigquery
 from utils.styles import apply_global_styles
 
 apply_global_styles()
 
-# SCOPES = [
-#     "https://www.googleapis.com/auth/cloud-platform",
-#     "https://www.googleapis.com/auth/drive",
-# ]
-
-# credentials = pydata_google_auth.get_user_credentials(
-#     SCOPES,
-#     auth_local_webserver=True,
-# )
-
 credentials = service_account.Credentials.from_service_account_info(
     st.secrets["gcp_service_account"],
     scopes=["https://www.googleapis.com/auth/cloud-platform"],
+)
+
+# configure browser tab
+st.set_page_config(
+    page_title="NYC Unemployment Dashboard",
+    page_icon="🗽",
+    layout="wide",
 )
 
 
@@ -46,10 +43,10 @@ with display_load_time():
     st.markdown(
         """
         <div style="
-            background-color:#FFE6EE;
+            background-color:#E5F3FD;
             padding:20px;
             border-radius:8px;
-            border-left:6px solid #FFD1DF;
+            border-left:6px solid #9ABDDC;
             font-size:17px;
         ">
             This graph shows overall total unemployment claims made
@@ -79,10 +76,10 @@ with display_load_time():
     st.markdown(
         """
         <div style="
-            background-color:#FFE6EE;
+            background-color:#E5F3FD;
             padding:20px;
             border-radius:8px;
-            border-left:6px solid #FFD1DF;
+            border-left:6px solid #9ABDDC;
             font-size:17px;
         ">
             This graph shows overall total continued unemployment claims
