@@ -3,15 +3,16 @@ import requests
 from google.cloud import bigquery
 
 
-def fetch_fred(series_id, api_key, column_name):
+def fetch_fred(series_id, api_key, column_name, frequency=None):
     url = "https://api.stlouisfed.org/fred/series/observations"
 
     params = {
         "series_id": series_id,
         "api_key": api_key,
         "file_type": "json",
-        "frequency": "w",
     }
+    if frequency:
+        params["frequency"] = frequency
 
     r = requests.get(url, params=params, timeout=10)
     data = r.json()
@@ -31,9 +32,9 @@ def fred_from_bigquery(credentials, table_name):
         project="sipa-adv-c-bouncy-banana",
     )
 
-    query = """
+    query = f"""
         SELECT *
-        FROM `sipa-adv-c-bouncy-banana.new_insurance.continued_insurance_table`
+        FROM `sipa-adv-c-bouncy-banana.new_insurance.{table_name}`
     """
 
     df = client.query(query).to_dataframe()
