@@ -112,8 +112,7 @@ with display_load_time():
 
     # ── BLS Unemployment Rate ─────────────────────────────────────────────────
     month_check = 13
-    st.header("BLS Unemployment Rate — New " \
-    "York State")
+    st.header("BLS Unemployment Rate — New York State")
     st.caption(
         "Source: U.S. Bureau of Labor Statistics — Local Area Unemployment Statistics "
         "(New York State)"
