@@ -2,7 +2,7 @@ import pandas as pd
 import requests
 
 
-def fetch_BLS(series_id, api_key, column_name, start_year=1976, end_year=None):
+def fetch_bls(series_id, api_key, column_name, start_year=1976, end_year=None):
     if end_year is None:
         end_year = pd.Timestamp.now().year
 

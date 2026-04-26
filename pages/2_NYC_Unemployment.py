@@ -111,14 +111,19 @@ with display_load_time():
     st.divider()
 
     # ── BLS Unemployment Rate ─────────────────────────────────────────────────
-    st.header("BLS Unemployment Rate — New York State")
-    st.caption("Source: U.S. Bureau of Labor Statistics — Local Area Unemployment Statistics (New York State)")
+    month_check = 13
+    st.header("BLS Unemployment Rate — New " \
+    "York State")
+    st.caption(
+        "Source: U.S. Bureau of Labor Statistics — Local Area Unemployment Statistics "
+        "(New York State)"
+    )
 
     try:
         bls_df = load_ny_unemployment_rate()
 
         latest_rate = float(bls_df[RATE_LABEL].iloc[-1])
-        prev_year_rate = float(bls_df[RATE_LABEL].iloc[-13]) if len(bls_df) > 13 else None
+        prev_year_rate = float(bls_df[RATE_LABEL].iloc[-13]) if len(bls_df) > month_check else None
         yoy_delta = round(latest_rate - prev_year_rate, 1) if prev_year_rate is not None else None
 
         b1, b2, b3 = st.columns(3)
@@ -172,7 +177,9 @@ with display_load_time():
             ]
             display_cols = [c for c in change_cols if c in bls_df.columns]
             st.dataframe(
-                filtered_bls[display_cols].sort_values("Date", ascending=False).reset_index(drop=True),
+                filtered_bls[display_cols]
+                .sort_values("Date", ascending=False)
+                .reset_index(drop=True),
                 use_container_width=True,
             )
 
@@ -213,7 +220,10 @@ with display_load_time():
         "Select Date Range for Continued Claims",
         min_value=continued_df["Date"].min().to_pydatetime(),
         max_value=continued_df["Date"].max().to_pydatetime(),
-        value=(continued_df["Date"].min().to_pydatetime(), continued_df["Date"].max().to_pydatetime()),
+        value=(
+            continued_df["Date"].min().to_pydatetime(),
+            continued_df["Date"].max().to_pydatetime(),
+        ),
     )
     filtered_continued = continued_df[
         (continued_df["Date"] >= start_date2) & (continued_df["Date"] <= end_date2)
@@ -233,8 +243,12 @@ with display_load_time():
         )
 
         # aggregate weekly claims → monthly totals
-        new_monthly = aggregate_monthly(claims_df, "Claims").rename(columns={"Claims": "New Claims"})
-        cont_monthly = aggregate_monthly(continued_df, "Claims").rename(columns={"Claims": "Continued Claims"})
+        new_monthly = aggregate_monthly(claims_df, "Claims").rename(
+            columns={"Claims": "New Claims"}
+        )
+        cont_monthly = aggregate_monthly(continued_df, "Claims").rename(
+            columns={"Claims": "Continued Claims"}
+        )
 
         # align BLS to monthly period (already monthly)
         bls_monthly = bls_df[["Date", RATE_LABEL]].copy()
@@ -274,7 +288,10 @@ with display_load_time():
                     y="New Claims",
                     hover_data={"Date": True},
                     title=f"Unemployment Rate vs. New Claims (r = {corr_new:.3f})",
-                    labels={RATE_LABEL: "Unemployment Rate (%)", "New Claims": "Monthly New Claims"},
+                    labels={
+                        RATE_LABEL: "Unemployment Rate (%)",
+                        "New Claims": "Monthly New Claims",
+                    },
                     color_discrete_sequence=["#3b82f6"],
                 )
                 fig_new.update_layout(height=400)
@@ -287,7 +304,10 @@ with display_load_time():
                     y="Continued Claims",
                     hover_data={"Date": True},
                     title=f"Unemployment Rate vs. Continued Claims (r = {corr_cont:.3f})",
-                    labels={RATE_LABEL: "Unemployment Rate (%)", "Continued Claims": "Monthly Continued Claims"},
+                    labels={
+                        RATE_LABEL: "Unemployment Rate (%)",
+                        "Continued Claims": "Monthly Continued Claims",
+                    },
                     color_discrete_sequence=["#9ABDDC"],
                 )
                 fig_cont.update_layout(height=400)
@@ -322,7 +342,9 @@ with display_load_time():
                 st.plotly_chart(fig_ov1, use_container_width=True)
 
             with overlay_tab2:
-                fig_ov2 = px.line(merged, x="Date", y=RATE_LABEL, title="BLS Rate vs. Continued Claims")
+                fig_ov2 = px.line(
+                    merged, x="Date", y=RATE_LABEL, title="BLS Rate vs. Continued Claims"
+                )
                 fig_ov2.add_scatter(
                     x=merged["Date"],
                     y=merged["Continued Claims"],
@@ -332,7 +354,11 @@ with display_load_time():
                 )
                 fig_ov2.update_layout(
                     yaxis={"title": "Unemployment Rate (%)"},
-                    yaxis2={"title": "Monthly Continued Claims", "overlaying": "y", "side": "right"},
+                    yaxis2={
+                        "title": "Monthly Continued Claims",
+                        "overlaying": "y",
+                        "side": "right",
+                    },
                     height=450,
                     legend={"orientation": "h", "y": -0.15},
                 )
@@ -378,7 +404,9 @@ with display_load_time():
             st.plotly_chart(fig_lag, use_container_width=True)
 
             best_lag_new = int(lag_df.loc[lag_df["New Claims"].abs().idxmax(), "Lag (months)"])
-            best_lag_cont = int(lag_df.loc[lag_df["Continued Claims"].abs().idxmax(), "Lag (months)"])
+            best_lag_cont = int(
+                lag_df.loc[lag_df["Continued Claims"].abs().idxmax(), "Lag (months)"]
+            )
             st.caption(
                 f"Strongest correlation for new claims at lag **{best_lag_new:+d} months**; "
                 f"continued claims at lag **{best_lag_cont:+d} months**."
