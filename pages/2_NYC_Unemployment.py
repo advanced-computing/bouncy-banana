@@ -338,9 +338,7 @@ with display_load_time():
             st.plotly_chart(fig_ov1, use_container_width=True)
 
         with overlay_tab2:
-            fig_ov2 = px.line(
-                merged, x="Date", y=RATE_LABEL, title="BLS Rate vs. Continued Claims"
-            )
+            fig_ov2 = px.line(merged, x="Date", y=RATE_LABEL, title="BLS Rate vs. Continued Claims")
             fig_ov2.add_scatter(
                 x=merged["Date"],
                 y=merged["Continued Claims"],
@@ -359,5 +357,3 @@ with display_load_time():
                 legend={"orientation": "h", "y": -0.15},
             )
             st.plotly_chart(fig_ov2, use_container_width=True)
-
-           

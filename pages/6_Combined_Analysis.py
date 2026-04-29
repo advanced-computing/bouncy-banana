@@ -1,6 +1,6 @@
-import plotly.graph_objects as go
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 import streamlit as st
 from google.oauth2 import service_account
 
@@ -79,12 +79,9 @@ def load_borough_rates():
     return combined
 
 
-
 @st.cache_data(ttl=3600)
 def load_ui_claims():
-    creds = service_account.Credentials.from_service_account_info(
-        st.secrets["gcp_service_account"]
-    )
+    creds = service_account.Credentials.from_service_account_info(st.secrets["gcp_service_account"])
     df = fred_from_bigquery(creds, "new_insurance_table")
     df["Date"] = pd.to_datetime(df["Date"])
     df["Month"] = df["Date"].dt.to_period("M").dt.to_timestamp()
@@ -166,13 +163,9 @@ st.caption(
 )
 
 eviction_year_df = eviction_df[eviction_df["Year"] == selected_year]
-eviction_by_borough = (
-    eviction_year_df.groupby("borough").size().reset_index(name="Evictions")
-)
+eviction_by_borough = eviction_year_df.groupby("borough").size().reset_index(name="Evictions")
 eviction_by_borough["borough"] = eviction_by_borough["borough"].str.upper()
-eviction_by_borough = eviction_by_borough[
-    eviction_by_borough["borough"].isin(BOROUGH_ORDER)
-].copy()
+eviction_by_borough = eviction_by_borough[eviction_by_borough["borough"].isin(BOROUGH_ORDER)].copy()
 
 if eviction_by_borough.empty:
     st.warning(f"No eviction data available for {selected_year}.")
@@ -184,9 +177,9 @@ else:
     eviction_by_borough["Est. Unemployed"] = (
         eviction_by_borough["Eviction Share (%)"] / 100 * total_unemployed
     ).astype(int)
-    eviction_by_borough = eviction_by_borough.sort_values(
-        "Evictions", ascending=False
-    ).reset_index(drop=True)
+    eviction_by_borough = eviction_by_borough.sort_values("Evictions", ascending=False).reset_index(
+        drop=True
+    )
 
     col_chart, col_table = st.columns([3, 2])
 
@@ -226,9 +219,7 @@ st.caption(
 ui_claims_df = load_ui_claims()
 
 if not eviction_by_borough.empty:
-    ui_annual_total = ui_claims_df[
-        ui_claims_df["Month"].dt.year == selected_year
-    ]["Claims"].sum()
+    ui_annual_total = ui_claims_df[ui_claims_df["Month"].dt.year == selected_year]["Claims"].sum()
 
     def get_metrics(borough: str) -> dict:
         # Est. unemployed: direct borough labor force × borough rate
@@ -242,11 +233,11 @@ if not eviction_by_borough.empty:
 
         # UI claims apportioned by eviction share
         ev_row = eviction_by_borough[eviction_by_borough["borough"] == borough]
-        ev_share = ev_row["Eviction Share (%)"].values[0] / 100 if not ev_row.empty else 0
+        ev_share = ev_row["Eviction Share (%)"].to_numpy(0) / 100 if not ev_row.empty else 0
         ui_claims = ui_annual_total * ev_share
 
         # Evictions from raw data
-        evictions = ev_row["Evictions"].values[0] if not ev_row.empty else 0
+        evictions = ev_row["Evictions"].to_numpy(0) if not ev_row.empty else 0
 
         return {"unemployed": unemployed, "ui_claims": ui_claims, "evictions": evictions}
 
@@ -259,13 +250,15 @@ if not eviction_by_borough.empty:
     ch1, ch2 = st.columns(2)
 
     with ch1:
-        fig_unemp = go.Figure(go.Bar(
-            x=boroughs,
-            y=[bronx["unemployed"], manhattan["unemployed"]],
-            marker_color=colors,
-            text=[f"{bronx['unemployed']:,.0f}", f"{manhattan['unemployed']:,.0f}"],
-            textposition="outside",
-        ))
+        fig_unemp = go.Figure(
+            go.Bar(
+                x=boroughs,
+                y=[bronx["unemployed"], manhattan["unemployed"]],
+                marker_color=colors,
+                text=[f"{bronx['unemployed']:,.0f}", f"{manhattan['unemployed']:,.0f}"],
+                textposition="outside",
+            )
+        )
         fig_unemp.update_layout(
             title=f"Est. Unemployed — {selected_year}",
             height=420,
@@ -279,13 +272,15 @@ if not eviction_by_borough.empty:
         st.plotly_chart(fig_unemp, use_container_width=True)
 
     with ch2:
-        fig_evict = go.Figure(go.Bar(
-            x=boroughs,
-            y=[bronx["evictions"], manhattan["evictions"]],
-            marker_color=colors,
-            text=[f"{bronx['evictions']:,}", f"{manhattan['evictions']:,}"],
-            textposition="outside",
-        ))
+        fig_evict = go.Figure(
+            go.Bar(
+                x=boroughs,
+                y=[bronx["evictions"], manhattan["evictions"]],
+                marker_color=colors,
+                text=[f"{bronx['evictions']:,}", f"{manhattan['evictions']:,}"],
+                textposition="outside",
+            )
+        )
         fig_evict.update_layout(
             title=f"Evictions — {selected_year}",
             height=420,
