@@ -325,9 +325,6 @@ for yr in common_years:
     ev_by_b["borough"] = ev_by_b["borough"].str.upper()
     ev_by_b = ev_by_b[ev_by_b["borough"].isin(BOROUGH_ORDER)]
 
-    if ev_by_b.empty:
-        continue
-
     total_ev_yr = ev_by_b["Evictions"].sum()
     for _, row in ev_by_b.iterrows():
         trend_rows.append(
