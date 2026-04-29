@@ -257,159 +257,103 @@ with display_load_time():
         merged = bls_monthly.merge(new_monthly, on="Date", how="inner")
         merged = merged.merge(cont_monthly, on="Date", how="inner")
 
-        if merged.empty:
-            st.info("No overlapping date range between BLS and claims datasets for correlation.")
-        else:
-            corr_new = merged[RATE_LABEL].corr(merged["New Claims"])
-            corr_cont = merged[RATE_LABEL].corr(merged["Continued Claims"])
+        corr_new = merged[RATE_LABEL].corr(merged["New Claims"])
+        corr_cont = merged[RATE_LABEL].corr(merged["Continued Claims"])
 
-            c1, c2 = st.columns(2)
-            with c1:
-                st.metric(
-                    "Correlation: Rate vs. New Claims",
-                    f"{corr_new:.3f}",
-                    help="Pearson r — values near ±1 indicate a strong linear relationship",
-                )
-            with c2:
-                st.metric(
-                    "Correlation: Rate vs. Continued Claims",
-                    f"{corr_cont:.3f}",
-                    help="Pearson r — values near ±1 indicate a strong linear relationship",
-                )
-
-            st.subheader("Scatter Plots")
-            sc1, sc2 = st.columns(2)
-
-            with sc1:
-                fig_new = px.scatter(
-                    merged,
-                    x=RATE_LABEL,
-                    y="New Claims",
-                    hover_data={"Date": True},
-                    title=f"Unemployment Rate vs. New Claims (r = {corr_new:.3f})",
-                    labels={
-                        RATE_LABEL: "Unemployment Rate (%)",
-                        "New Claims": "Monthly New Claims",
-                    },
-                    color_discrete_sequence=["#3b82f6"],
-                )
-                fig_new.update_layout(height=400)
-                st.plotly_chart(fig_new, use_container_width=True)
-
-            with sc2:
-                fig_cont = px.scatter(
-                    merged,
-                    x=RATE_LABEL,
-                    y="Continued Claims",
-                    hover_data={"Date": True},
-                    title=f"Unemployment Rate vs. Continued Claims (r = {corr_cont:.3f})",
-                    labels={
-                        RATE_LABEL: "Unemployment Rate (%)",
-                        "Continued Claims": "Monthly Continued Claims",
-                    },
-                    color_discrete_sequence=["#9ABDDC"],
-                )
-                fig_cont.update_layout(height=400)
-                st.plotly_chart(fig_cont, use_container_width=True)
-
-            # ── Dual-axis time series overlay ─────────────────────────────────
-            st.subheader("BLS Rate vs. Claims Over Time")
-            overlay_tab1, overlay_tab2 = st.tabs(["New Claims", "Continued Claims"])
-
-            with overlay_tab1:
-                fig_ov1 = px.line(
-                    merged,
-                    x="Date",
-                    y=[RATE_LABEL, "New Claims"],
-                    title="BLS Unemployment Rate & Monthly New Claims",
-                )
-                # secondary y-axis for claims
-                fig_ov1 = px.line(merged, x="Date", y=RATE_LABEL, title="BLS Rate vs. New Claims")
-                fig_ov1.add_scatter(
-                    x=merged["Date"],
-                    y=merged["New Claims"],
-                    name="New Claims",
-                    yaxis="y2",
-                    line={"color": "#3b82f6"},
-                )
-                fig_ov1.update_layout(
-                    yaxis={"title": "Unemployment Rate (%)"},
-                    yaxis2={"title": "Monthly New Claims", "overlaying": "y", "side": "right"},
-                    height=450,
-                    legend={"orientation": "h", "y": -0.15},
-                )
-                st.plotly_chart(fig_ov1, use_container_width=True)
-
-            with overlay_tab2:
-                fig_ov2 = px.line(
-                    merged, x="Date", y=RATE_LABEL, title="BLS Rate vs. Continued Claims"
-                )
-                fig_ov2.add_scatter(
-                    x=merged["Date"],
-                    y=merged["Continued Claims"],
-                    name="Continued Claims",
-                    yaxis="y2",
-                    line={"color": "#9ABDDC"},
-                )
-                fig_ov2.update_layout(
-                    yaxis={"title": "Unemployment Rate (%)"},
-                    yaxis2={
-                        "title": "Monthly Continued Claims",
-                        "overlaying": "y",
-                        "side": "right",
-                    },
-                    height=450,
-                    legend={"orientation": "h", "y": -0.15},
-                )
-                st.plotly_chart(fig_ov2, use_container_width=True)
-
-            # ── Lag correlation ───────────────────────────────────────────────
-            st.subheader("Lag Correlation Analysis")
-            info_box(
-                "Shows how the Pearson correlation between the BLS unemployment rate and "
-                "each claims series changes when claims are shifted forward or backward in "
-                "time. A positive lag means claims lead the unemployment rate; negative "
-                "means the rate leads claims."
+        c1, c2 = st.columns(2)
+        with c1:
+            st.metric(
+                "Correlation: Rate vs. New Claims",
+                f"{corr_new:.3f}",
+                help="r — values near ±1 indicate a strong linear relationship",
+            )
+        with c2:
+            st.metric(
+                "Correlation: Rate vs. Continued Claims",
+                f"{corr_cont:.3f}",
+                help="r — values near ±1 indicate a strong linear relationship",
             )
 
-            max_lag = st.slider("Maximum lag (months)", min_value=3, max_value=24, value=12, step=1)
-            lags = range(-max_lag, max_lag + 1)
+        st.subheader("Scatter Plots")
+        sc1, sc2 = st.columns(2)
 
-            lag_corr_new = [
-                merged[RATE_LABEL].corr(merged["New Claims"].shift(lag)) for lag in lags
-            ]
-            lag_corr_cont = [
-                merged[RATE_LABEL].corr(merged["Continued Claims"].shift(lag)) for lag in lags
-            ]
-
-            lag_df = pd.DataFrame(
-                {
-                    "Lag (months)": list(lags),
-                    "New Claims": lag_corr_new,
-                    "Continued Claims": lag_corr_cont,
-                }
+        with sc1:
+            fig_new = px.scatter(
+                merged,
+                x=RATE_LABEL,
+                y="New Claims",
+                hover_data={"Date": True},
+                title=f"Unemployment Rate vs. New Claims (r = {corr_new:.3f})",
+                labels={
+                    RATE_LABEL: "Unemployment Rate (%)",
+                    "New Claims": "Monthly New Claims",
+                },
+                color_discrete_sequence=["#3b82f6"],
             )
+            fig_new.update_layout(height=400)
+            st.plotly_chart(fig_new, use_container_width=True)
 
-            fig_lag = px.line(
-                lag_df,
-                x="Lag (months)",
-                y=["New Claims", "Continued Claims"],
-                title="Lag Correlation: BLS Rate vs. Claims",
-                labels={"value": "Pearson r", "variable": "Series"},
-                color_discrete_sequence=["#3b82f6", "#9ABDDC"],
+        with sc2:
+            fig_cont = px.scatter(
+                merged,
+                x=RATE_LABEL,
+                y="Continued Claims",
+                hover_data={"Date": True},
+                title=f"Unemployment Rate vs. Continued Claims (r = {corr_cont:.3f})",
+                labels={
+                    RATE_LABEL: "Unemployment Rate (%)",
+                    "Continued Claims": "Monthly Continued Claims",
+                },
+                color_discrete_sequence=["#9ABDDC"],
             )
-            fig_lag.add_vline(x=0, line_dash="dash", line_color="gray")
-            fig_lag.update_layout(height=400)
-            st.plotly_chart(fig_lag, use_container_width=True)
+            fig_cont.update_layout(height=400)
+            st.plotly_chart(fig_cont, use_container_width=True)
 
-            best_lag_new = int(lag_df.loc[lag_df["New Claims"].abs().idxmax(), "Lag (months)"])
-            best_lag_cont = int(
-                lag_df.loc[lag_df["Continued Claims"].abs().idxmax(), "Lag (months)"]
-            )
-            st.caption(
-                f"Strongest correlation for new claims at lag **{best_lag_new:+d} months**; "
-                f"continued claims at lag **{best_lag_cont:+d} months**."
-            )
+        # ── Dual-axis time series overlay ─────────────────────────────────
+        st.subheader("BLS Rate vs. Claims Over Time")
+        overlay_tab1, overlay_tab2 = st.tabs(["New Claims", "Continued Claims"])
 
-    else:
-        st.info("Add a `bls_api_key` to .streamlit/secrets.toml to enable correlation analysis.")
+        with overlay_tab1:
+            fig_ov1 = px.line(
+                merged,
+                x="Date",
+                y=[RATE_LABEL, "New Claims"],
+                title="BLS Unemployment Rate & Monthly New Claims",
+            )
+            # secondary y-axis for claims
+            fig_ov1 = px.line(merged, x="Date", y=RATE_LABEL, title="BLS Rate vs. New Claims")
+            fig_ov1.add_scatter(
+                x=merged["Date"],
+                y=merged["New Claims"],
+                name="New Claims",
+                yaxis="y2",
+                line={"color": "#3b82f6"},
+            )
+            fig_ov1.update_layout(
+                yaxis={"title": "Unemployment Rate (%)"},
+                yaxis2={"title": "Monthly New Claims", "overlaying": "y", "side": "right"},
+                height=450,
+                legend={"orientation": "h", "y": -0.15},
+            )
+            st.plotly_chart(fig_ov1, use_container_width=True)
+
+        with overlay_tab2:
+            fig_ov2 = px.line(merged, x="Date", y=RATE_LABEL, title="BLS Rate vs. Continued Claims")
+            fig_ov2.add_scatter(
+                x=merged["Date"],
+                y=merged["Continued Claims"],
+                name="Continued Claims",
+                yaxis="y2",
+                line={"color": "#9ABDDC"},
+            )
+            fig_ov2.update_layout(
+                yaxis={"title": "Unemployment Rate (%)"},
+                yaxis2={
+                    "title": "Monthly Continued Claims",
+                    "overlaying": "y",
+                    "side": "right",
+                },
+                height=450,
+                legend={"orientation": "h", "y": -0.15},
+            )
+            st.plotly_chart(fig_ov2, use_container_width=True)
