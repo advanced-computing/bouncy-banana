@@ -57,7 +57,7 @@ with display_load_time():
             unsafe_allow_html=True,
         )
 
-    st.title("NYC Unemployment & Evictions: Combined Analysis")
+    st.title("NYC Unemployment Dashboard")
     st.caption(
         "Sources: FRED (borough-level civilian labor force series, NYUR unemployment rate), "
         "NYC Open Data (Evictions)"
