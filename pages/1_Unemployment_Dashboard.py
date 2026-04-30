@@ -158,7 +158,7 @@ with display_load_time():
 
     st.divider()
 
-    #Bronx vs. Manhattan
+    # Bronx vs. Manhattan
     st.header("Bronx vs. Manhattan: Unemployment & Evictions")
     st.caption(
         f"Both metrics for the selected year ({selected_year}). "
