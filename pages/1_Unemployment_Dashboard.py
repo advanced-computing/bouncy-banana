@@ -14,7 +14,6 @@ from dashboard_data import (
     load_borough_labor,
     load_borough_rates,
     load_eviction_data,
-    load_ui_claims,
 )
 from utils.styles import apply_global_styles
 
@@ -83,10 +82,6 @@ with display_load_time():
     rate_years = set(rate_by_year["Year"].unique())
     eviction_years = set(eviction_df["Year"].dropna().astype(int).unique())
     common_years = sorted(labor_years & rate_years & eviction_years, reverse=True)
-
-    if not common_years:
-        st.error("No overlapping years found across all three datasets.")
-        st.stop()
 
     selected_year = st.selectbox("Select Year", common_years, index=0)
 
@@ -161,34 +156,23 @@ with display_load_time():
             ].rename(columns={"borough": "Borough"})
             st.dataframe(display_df, use_container_width=True, hide_index=True)
 
-        info_box(
-            "Each borough's eviction share acts as a proxy for economic distress concentration."
-            "This is a distributional estimate — not a direct measurement."
-        )
-
     st.divider()
 
-    # ── Bronx vs. Manhattan: three-metric comparison ─────────────────────────────
-    st.header("Bronx vs. Manhattan: Unemployment, UI Claims & Evictions")
+    # Bronx vs. Manhattan
+    st.header("Bronx vs. Manhattan: Unemployment & Evictions")
     st.caption(
-        f"All three metrics for the selected year ({selected_year}). "
+        f"Both metrics for the selected year ({selected_year}). "
         "Each panel uses its own scale so no metric is dwarfed by another."
     )
 
-    ui_claims_df = load_ui_claims()
-
     if not eviction_by_borough.empty:
-        ui_annual_total = ui_claims_df[ui_claims_df["Month"].dt.year == selected_year][
-            "Claims"
-        ].sum()
-
         data = {
             "labor": borough_labor_df,
             "rates": borough_rates_df,
             "evictions": eviction_by_borough,
         }
-        bronx = get_metrics("BRONX", selected_year, data, ui_annual_total)
-        manhattan = get_metrics("MANHATTAN", selected_year, data, ui_annual_total)
+        bronx = get_metrics("BRONX", selected_year, data)
+        manhattan = get_metrics("MANHATTAN", selected_year, data)
 
         boroughs = ["Bronx", "Manhattan"]
         colors = ["#ef4444", "#3b82f6"]

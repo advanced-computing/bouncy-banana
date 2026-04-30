@@ -116,7 +116,7 @@ def load_eviction_data():
     return df
 
 
-def get_metrics(borough, selected_year, data, ui_annual_total):
+def get_metrics(borough, selected_year, data):
     borough_labor_df = data["labor"]
     borough_rates_df = data["rates"]
     eviction_by_borough = data["evictions"]
@@ -130,9 +130,6 @@ def get_metrics(borough, selected_year, data, ui_annual_total):
     unemployed = labor * (rate / 100)
 
     ev_row = eviction_by_borough[eviction_by_borough["borough"] == borough]
-    ev_share = ev_row["Eviction Share (%)"].iloc[0] / 100 if not ev_row.empty else 0
-    ui_claims = ui_annual_total * ev_share
-
     evictions = ev_row["Evictions"].iloc[0] if not ev_row.empty else 0
 
-    return {"unemployed": unemployed, "ui_claims": ui_claims, "evictions": evictions}
+    return {"unemployed": unemployed, "evictions": evictions}
