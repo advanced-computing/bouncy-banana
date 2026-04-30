@@ -100,9 +100,7 @@ def load_borough_rates():
 
 @st.cache_data(ttl=3600)
 def load_ui_claims():
-    creds = service_account.Credentials.from_service_account_info(
-        st.secrets["gcp_service_account"]
-    )
+    creds = service_account.Credentials.from_service_account_info(st.secrets["gcp_service_account"])
     df = fred_from_bigquery(creds, "new_insurance_table")
     df["Date"] = pd.to_datetime(df["Date"])
     df["Month"] = df["Date"].dt.to_period("M").dt.to_timestamp()
