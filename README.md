@@ -2,39 +2,57 @@
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
 </a>
 
-## Exploring the Effects of Joblessness on New Yorkers
+# Exploring Unemployment and Lifestyle Metrics in NYC
+## Sophia Cain (sac2381) & Samuel Fu (sf3318) | Advanced Computing for Policy, Spring 2026
+## Project Proposal
+This project examines how unemployment trends intersect with key lifestyle
+metrics, specifically housing security and public health, for New Yorkers
+over time. We offer a comprehensive dashboard providing a high-level view
+of all variables, alongside dedicated pages for deeper dives into each topic.
+Interactive elements allow users to explore and analyze these trends
+across different time periods.
+## Research Questions
+- What are the effects of unemployment on the well-being of New Yorkers?
+- What is the relationship between housing stability, physical health, and unemployment among New York City residents?
+- Is there a correlation between unemployment and housing instability, specifically eviction rates, in New York City?
+- Is there a correlation between unemployment and physical health outcomes in New York City
+- How can policymakers use data on housing instability and physical health outcomes to design more effective social benefit programs for unemployed New Yorkers?
+## Datasets
+NYC Open Data: Health Survey
+ - Updated Semi-Annually
+ - Community health survey data covering different health indicators and access to care over time.
 
-# Our Datasets
-
-City of New York Job Postings
- - Updated weekly
- - This dataset contains current job postings available on the City of New York’s official jobs site Internal postings available to city employees and external postings available to the general public are included.
-
-United States Department of Labor Unemployment Claims
+United States Department of Labor Unemployment Claims (FRED)
 - Updated Weekly
 - The Unemployment Insurance weekly claims data are used in current economic analysis of unemployment trends in the nation, and in each state. Initial claims measure emerging unemployment and continued weeks claimed measure the number of persons claiming unemployment benefits.
 
-City of New York Motor Vehicle Collisions - Crashes
-- Updated Daily
-- The Motor Vehicle Collisions crash table contains details on the crash event. Each row represents a crash event. The Motor Vehicle Collisions data tables contain information from all police reported motor vehicle collisions in NYC. The police report (MV104-AN) is required to be filled out for collisions where someone is injured or killed, or where there is at least $1000 worth of damage.
+NYC Open Data: Eviction Records
+- Updated Monthly
+- Eviction filings, shelter census, and housing court data tracking housing instability across NYC boroughs.
+## Project Setup
+1. Clone the repository
+``` bash
+git clone https://github.com/advanced-computing/bouncy-banana.git
+cd bouncy-banana 
+```
 
-What are your research question(s)?
+2. Create and activate a virtual envirinment
+```bash
+python -m venv venv
+source venv/bin/activate        #Mac/Linux
+venv\Scripts\activate           #Windows
+```
 
-What is the relationship between total New York City job postings and unemployment insurance claims over the past 10 years?
+3. Install Packages
+Install all necessary packages by running:
+``` bash
+pip install -r requirements.txt
+``` 
 
-How do the education levels of New Yorkers seeking jobs change in relation to unemployment over time?
+4. Set up secrets
+- Our datasets are stored in Big Query, you will need to set the ```secrets.toml```
+- Use instructions [here] (https://github.com/advanced-computing/course-materials/blob/main/docs/project.md)
 
-Is there a relationship between unemployment rates in New York and crimes committed?
-
-
-# What are we still working on?
-
-- We have weekly data on NYC traffic incidents as a way to measure crime, but we are unsure if this is an accurate enough depiction of crime. NYC does have more comprehensive crime data, but it is not updated frequently enough to be relevant for this project.
-
-- We have information on the education level of job-seekers in NYC based on unemployment insurance claim data, but we do not have a concrete or efficient way to isolate this data.
-
-- We will be working with three data sets with varying frequencies of collection, therefore we will need to standardize the data to be weekly or monthly.
-
-- These data sets go back decades and therefore we need to either limit the amount of data we are pulling or choose a different interval for the data we will be using.
-
-- Due to the size of the data sets and the amount we have, we anticipate that cleaning the data will take the most time and present the most challenge. 
+3. Run the streamlit app locally
+You can view the app locally by running ``` streamlit run streamlit_app.py``` in the command line
+## Future Improvements
