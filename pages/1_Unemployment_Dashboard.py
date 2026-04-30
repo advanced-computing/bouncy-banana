@@ -80,7 +80,9 @@ with display_load_time():
 
     # aAggregate for year filter and key metrics
     labor_by_year = (
-        borough_labor_df.groupby("Year")["Labor Force"]
+        borough_labor_df.groupby(["Year", "Borough"])["Labor Force"]
+        .mean()
+        .groupby("Year")
         .sum()
         .reset_index()
         .rename(columns={"Labor Force": LABOR_LABEL})
