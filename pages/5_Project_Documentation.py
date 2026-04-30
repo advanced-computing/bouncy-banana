@@ -205,11 +205,40 @@ with display_load_time():
             font-size:17px;
         ">
             This project examines how unemployment trends intersect with key lifestyle
-            metrics — including housing security and public health — for New Yorkers
+            metrics, specifically housing security and public health, for New Yorkers
             over time. We offer a comprehensive dashboard providing a high-level view
             of all variables, alongside dedicated pages for deeper dives into each topic.
             Interactive elements allow users to explore and analyze these trends
             across different time periods.
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    st.divider()
+
+    st.subheader("Research Questions")
+    st.markdown(
+        """
+        <div style="
+            background-color:#E5F3FD;
+            padding:20px;
+            border-radius:8px;
+            border-left:6px solid #9ABDDC;
+            font-size:17px;
+        ">
+            <ul>
+                <li>What are the effects of unemployment on the well-being of New Yorkers?</li>
+                <li>What is the relationship between housing stability, physical health, and
+                  unemployment among New York City residents?</li>
+                <li>Is there a correlation between unemployment and housing instability,
+                  specifically eviction rates, in New York City?</li>
+                <li>Is there a correlation between unemployment and physical health outcomes
+                  in New York City?</li>
+                <li><b>How can policymakers use data on housing instability and physical health
+                  outcomes to design more effective social benefit programs for unemployed
+                  New Yorkers?</b></li>
+            </ul>
         </div>
         """,
         unsafe_allow_html=True,
