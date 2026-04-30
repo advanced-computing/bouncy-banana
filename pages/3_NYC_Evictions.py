@@ -4,8 +4,8 @@ from contextlib import contextmanager
 import pydeck as pdk
 import streamlit as st
 
-from eviction_bq import borough_count, eviction
-from utils.styles import apply_global_styles
+from src.functions.eviction_bq import borough_count, eviction
+from src.utils.styles import apply_global_styles
 
 DATE_RANGE_LENGTH = 2
 
