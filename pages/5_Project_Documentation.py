@@ -8,16 +8,18 @@ import streamlit as st
 from src.functions.fred_data import fetch_fred
 from src.utils.styles import apply_global_styles
 
-# set_page_config must be the first Streamlit call
+# format page tab
 st.set_page_config(
     page_title="Project Documentation",
     page_icon="🗽",
     layout="wide",
 )
 
+# apply universal formatting
 apply_global_styles()
 
 
+# define page time
 @contextmanager
 def display_load_time():
     start_time = time.time()
@@ -28,6 +30,7 @@ def display_load_time():
         st.caption(f"Page loaded in {elapsed:.2f} seconds")
 
 
+# I used Claude to make this visual!
 def nyc_skyline_banner():
     svg = """
     <svg viewBox="0 0 900 160" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;">
@@ -120,6 +123,7 @@ def nyc_skyline_banner():
     )
 
 
+# make three information cards on data sets
 def dataset_cards():
     datasets = [
         {
@@ -175,6 +179,7 @@ def dataset_cards():
             )
 
 
+# main page formatting
 with display_load_time():
     fred_key = "aa9cd57aae80525dc171dbc517b39546"
     claims_df = fetch_fred("NYICLAIMS", fred_key, "Claims")

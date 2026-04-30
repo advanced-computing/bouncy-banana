@@ -16,6 +16,7 @@ st.set_page_config(
     layout="wide",
 )
 
+# apply universal formatting
 apply_global_styles()
 
 
@@ -27,6 +28,7 @@ def load_eviction_data():
     return df
 
 
+# define load time
 @contextmanager
 def display_load_time():
     start_time = time.time()
@@ -37,10 +39,11 @@ def display_load_time():
         st.caption(f"Page loaded in {elapsed:.2f} seconds")
 
 
+# main page formatting
 with display_load_time():
     eviction_data = load_eviction_data()
 
-    # --- Sidebar Filters ---
+    # sidebar filters
     st.sidebar.header("Filters")
 
     boroughs = sorted(eviction_data["borough"].dropna().unique().tolist())
@@ -68,12 +71,12 @@ with display_load_time():
             & (filtered["executed_date"].dt.date <= end_date)
         ]
 
-    # --- Page Title ---
+    # title formatting
     st.title("NYC Eviction Data")
 
     st.divider()
 
-    # --- Summary Metrics ---
+    # summary metrics
     col1, col2, col3 = st.columns(3)
     col1.metric("Total Evictions", f"{len(filtered):,}")
 
@@ -90,7 +93,7 @@ with display_load_time():
     )
     col3.metric("Date Range", date_label)
 
-    # --- Tabs ---
+    # tabs on visualization
     tab_map, tab_trends, tab_borough, tab_data = st.tabs(
         ["Map", "Trends", "By Borough", "Raw Data"]
     )

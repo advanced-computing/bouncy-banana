@@ -29,10 +29,22 @@ con.execute("CREATE TABLE new_insurance_table AS SELECT * FROM df")
 print(con.sql("SELECT * FROM new_insurance_table").fetchdf())
 con.close()
 
-# Write to BigQuery
-pandas_gbq.to_gbq(
-    df, f"{DATASET}.{TABLE}", project_id=PROJECT_ID, if_exists="append", credentials=credentials
-)
+# Incremental load: only insert records newer than what's already in BigQuery
+try:
+    existing = pandas_gbq.read_gbq(
+        f"SELECT MAX(Date) as max_date FROM `{PROJECT_ID}.{DATASET}.{TABLE}`",
+        project_id=PROJECT_ID,
+        credentials=credentials,
+    )
+    max_date = existing["max_date"].iloc[0]
+    df = df[df["Date"].astype(str) > str(max_date)]
+except Exception:
+    pass  # table doesn't exist yet, insert all records
+
+if not df.empty:
+    pandas_gbq.to_gbq(
+        df, f"{DATASET}.{TABLE}", project_id=PROJECT_ID, if_exists="append", credentials=credentials
+    )
 
 # Read back from BigQuery to verify
 df_new = pandas_gbq.read_gbq(

@@ -45,13 +45,25 @@ def push_borough_labor_to_bq():
         frames.append(df)
     combined = pd.concat(frames)
     combined["Year"] = combined["Date"].dt.year
-    pandas_gbq.to_gbq(
-        combined,
-        "unemployment.borough_labor_table",
-        project_id=PROJECT_ID,
-        if_exists="append",
-        credentials=credentials,
-    )
+    try:
+        existing = pandas_gbq.read_gbq(
+            f"SELECT MAX(Date) as max_date FROM `{PROJECT_ID}.unemployment.borough_labor_table`",
+            project_id=PROJECT_ID,
+            credentials=credentials,
+        )
+        max_date = existing["max_date"].iloc[0]
+        combined = combined[combined["Date"].astype(str) > str(max_date)]
+    except Exception:
+        pass  # table doesn't exist yet, insert all records
+
+    if not combined.empty:
+        pandas_gbq.to_gbq(
+            combined,
+            "unemployment.borough_labor_table",
+            project_id=PROJECT_ID,
+            if_exists="append",
+            credentials=credentials,
+        )
 
 
 def push_borough_rates_to_bq():
@@ -63,13 +75,25 @@ def push_borough_rates_to_bq():
         frames.append(df)
     combined = pd.concat(frames)
     combined["Year"] = combined["Date"].dt.year
-    pandas_gbq.to_gbq(
-        combined,
-        "unemployment.borough_rates_table",
-        project_id=PROJECT_ID,
-        if_exists="append",
-        credentials=credentials,
-    )
+    try:
+        existing = pandas_gbq.read_gbq(
+            f"SELECT MAX(Date) as max_date FROM `{PROJECT_ID}.unemployment.borough_rates_table`",
+            project_id=PROJECT_ID,
+            credentials=credentials,
+        )
+        max_date = existing["max_date"].iloc[0]
+        combined = combined[combined["Date"].astype(str) > str(max_date)]
+    except Exception:
+        pass  # table doesn't exist yet, insert all records
+
+    if not combined.empty:
+        pandas_gbq.to_gbq(
+            combined,
+            "unemployment.borough_rates_table",
+            project_id=PROJECT_ID,
+            if_exists="append",
+            credentials=credentials,
+        )
 
 
 @st.cache_data

@@ -9,24 +9,26 @@ from google.oauth2 import service_account
 from src.functions.fred_data import fetch_fred, fred_from_bigquery
 from src.utils.styles import apply_global_styles
 
+# apply universal formatting
 apply_global_styles()
 
+# bq credentials
 credentials = service_account.Credentials.from_service_account_info(
     st.secrets["gcp_service_account"]
 )
 
+# format page tab
 st.set_page_config(
     page_title="NYC Unemployment Dashboard",
     page_icon="🗽",
     layout="wide",
 )
 
-apply_global_styles()
-
 FRED_KEY = "aa9cd57aae80525dc171dbc517b39546"
 RATE_LABEL = "Unemployment Rate (%)"
 
 
+# load cached data frames
 @st.cache_data
 def load_fred_new_claims():
     return fred_from_bigquery(credentials, "new_insurance_table")
@@ -47,6 +49,7 @@ def load_ny_unemployment_rate():
     return df
 
 
+# page formatting
 @contextmanager
 def display_load_time():
     start_time = time.time()
@@ -85,7 +88,7 @@ with display_load_time():
     continued_df = load_fred_continued_claims()
     continued_df["Date"] = pd.to_datetime(continued_df["Date"])
 
-    # ── aggregate yearly for key metrics ──────────────────────────────────────
+    # aggregate yearly for key metrics
     claims_df_yearly = claims_df.copy()
     claims_df_yearly["year"] = claims_df_yearly["Date"].dt.year
     fred_yearly = claims_df_yearly.groupby("year")["Claims"].sum().reset_index()
@@ -95,7 +98,7 @@ with display_load_time():
 
     st.title("NYC Unemployment Dashboard")
 
-    # ── Key Metrics ───────────────────────────────────────────────────────────
+    # key metrics
     st.subheader("Key Insights")
     col1, col2, col3 = st.columns(3)
     with col1:
@@ -110,7 +113,7 @@ with display_load_time():
 
     st.divider()
 
-    # ── BLS Unemployment Rate ─────────────────────────────────────────────────
+    # BLS Unemployment Rate
     month_check = 13
     st.header("BLS Unemployment Rate — New York State")
     st.caption(
@@ -188,7 +191,7 @@ with display_load_time():
 
     st.divider()
 
-    # ── New Unemployment Claims ───────────────────────────────────────────────
+    # New Unemployment Claims
     st.header("New Unemployment Claims — New York City")
     st.text("Source: NYC Open Data")
     info_box(
@@ -207,7 +210,7 @@ with display_load_time():
 
     st.divider()
 
-    # ── Continued Unemployment Claims ─────────────────────────────────────────
+    # Continued Unemployment Claims
     st.header("Continued Unemployment Claims — New York City")
     st.text("Source: NYC Open Data")
     info_box(
@@ -231,17 +234,17 @@ with display_load_time():
 
     st.divider()
 
-    # ── Correlation & Analysis ────────────────────────────────────────────────
-    st.header("Correlation Analysis: BLS Unemployment Rate vs. Claims")
+    # Correlation & Analysis
+    st.header("BLS Unemployment Rate vs. Claims")
 
     if bls_df is not None:
         info_box(
             "Monthly BLS unemployment rate compared against monthly-aggregated new and "
-            "continued unemployment claims. Pearson correlation and scatter plots show "
+            "continued unemployment claims. Correlation and scatter plots show "
             "how closely claims track the official unemployment rate."
         )
 
-        # aggregate weekly claims → monthly totals
+        # aggregate weekly claims on monthly totals
         new_monthly = aggregate_monthly(claims_df, "Claims").rename(
             columns={"Claims": "New Claims"}
         )
@@ -309,7 +312,7 @@ with display_load_time():
             fig_cont.update_layout(height=400)
             st.plotly_chart(fig_cont, use_container_width=True)
 
-        # ── Dual-axis time series overlay ─────────────────────────────────
+        # dual-axis time series overlay
         st.subheader("BLS Rate vs. Claims Over Time")
         overlay_tab1, overlay_tab2 = st.tabs(["New Claims", "Continued Claims"])
 
@@ -357,3 +360,5 @@ with display_load_time():
                 legend={"orientation": "h", "y": -0.15},
             )
             st.plotly_chart(fig_ov2, use_container_width=True)
+
+    st.divider()
