@@ -27,6 +27,7 @@ def load_health_data():
     df[access_cols] = df[access_cols].apply(pd.to_numeric, errors="coerce")
     return df.groupby("year")[access_cols].mean().reset_index()
 
+
 # format tab label
 st.set_page_config(
     page_title="Project Dashboard",
