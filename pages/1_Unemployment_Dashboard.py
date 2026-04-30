@@ -16,7 +16,17 @@ from src.functions.dashboard_data import (
     load_eviction_data,
     load_ui_claims,
 )
+from src.functions.health_bq import health
 from src.utils.styles import apply_global_styles
+
+
+@st.cache_data
+def load_health_data():
+    df = health()
+    access_cols = ["No Health Insurance", "Do not get medical care", "No Personal Doctor"]
+    df[access_cols] = df[access_cols].apply(pd.to_numeric, errors="coerce")
+    return df.groupby("year")[access_cols].mean().reset_index()
+
 
 # format tab label
 st.set_page_config(
@@ -57,7 +67,7 @@ with display_load_time():
             unsafe_allow_html=True,
         )
 
-    st.title("NYC Unemployment & Evictions: Combined Analysis")
+    st.title("NYC Unemployment Dashboard")
     st.caption(
         "Sources: FRED (borough-level civilian labor force series, NYUR unemployment rate), "
         "NYC Open Data (Evictions)"
@@ -296,5 +306,57 @@ with display_load_time():
         )
         fig_trend.update_layout(height=480, legend={"orientation": "h", "y": -0.15})
         st.plotly_chart(fig_trend, use_container_width=True)
+
+    st.divider()
+
+    # ── Unemployment Rate vs. Access to Care ──────────────────────────────────
+    st.header("Unemployment Rate vs. Access to Care")
+    st.caption(
+        "NYC average unemployment rate (left axis) compared to access-to-care health indicators "
+        "(right axis). Health data covers 2010–2020."
+    )
+
+    health_df = load_health_data()
+    merged = rate_by_year.rename(columns={"Year": "year"}).merge(health_df, on="year", how="inner")
+
+    if not merged.empty:
+        access_cols = ["No Health Insurance", "Do not get medical care", "No Personal Doctor"]
+        access_colors = ["#e07b39", "#6c8ebf", "#82b366"]
+
+        fig_care = go.Figure()
+
+        fig_care.add_trace(
+            go.Scatter(
+                x=merged["year"],
+                y=merged[RATE_LABEL],
+                name="Unemployment Rate (%)",
+                line={"color": "#ef4444", "width": 3},
+                yaxis="y1",
+            )
+        )
+
+        for col, color in zip(access_cols, access_colors, strict=True):
+            fig_care.add_trace(
+                go.Scatter(
+                    x=merged["year"],
+                    y=merged[col],
+                    name=col,
+                    line={"color": color, "width": 2, "dash": "dot"},
+                    yaxis="y2",
+                )
+            )
+
+        fig_care.update_layout(
+            height=480,
+            yaxis={"title": {"text": "Unemployment Rate (%)", "font": {"color": "#ef4444"}}},
+            yaxis2={
+                "title": "Population Share (%)",
+                "overlaying": "y",
+                "side": "right",
+            },
+            legend={"orientation": "h", "y": -0.2},
+            hovermode="x unified",
+        )
+        st.plotly_chart(fig_care, use_container_width=True)
 
     st.divider()
