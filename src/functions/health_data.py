@@ -28,9 +28,21 @@ con.execute("CREATE TABLE health_table AS SELECT * FROM df")
 print(con.sql("SELECT * FROM health_table").fetchdf().columns.tolist())
 con.close()
 
-# Write to BigQuery
-pandas_gbq.to_gbq(
-    df, f"{DATASET}.{TABLE}", project_id=PROJECT_ID, if_exists="append", credentials=credentials
-)
+# Incremental load: only insert records newer than what's already in BigQuery
+try:
+    existing = pandas_gbq.read_gbq(
+        f"SELECT MAX(year) as max_year FROM `{PROJECT_ID}.{DATASET}.{TABLE}`",
+        project_id=PROJECT_ID,
+        credentials=credentials,
+    )
+    max_year = existing["max_year"].iloc[0]
+    df = df[df["year"].astype(str) > str(max_year)]
+except Exception:
+    pass  # table doesn't exist yet, insert all records
+
+if not df.empty:
+    pandas_gbq.to_gbq(
+        df, f"{DATASET}.{TABLE}", project_id=PROJECT_ID, if_exists="append", credentials=credentials
+    )
 
 print("Upload complete.")

@@ -18,6 +18,7 @@ from src.functions.dashboard_data import (
 )
 from src.utils.styles import apply_global_styles
 
+# format tab label
 st.set_page_config(
     page_title="Project Dashboard",
     page_icon="🗽",
@@ -25,9 +26,11 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+# apply universal formatting
 apply_global_styles()
 
 
+# define page load time
 @contextmanager
 def display_load_time():
     start_time = time.time()
@@ -39,7 +42,7 @@ def display_load_time():
 
 
 with display_load_time():
-
+    # format heading
     def info_box(text: str):
         st.markdown(
             f"""
@@ -60,11 +63,12 @@ with display_load_time():
         "NYC Open Data (Evictions)"
     )
 
+    # load data frames
     borough_labor_df = load_borough_labor()
     borough_rates_df = load_borough_rates()
     eviction_df = load_eviction_data()
 
-    # Aggregate for year filter and top-level metrics
+    # aAggregate for year filter and key metrics
     labor_by_year = (
         borough_labor_df.groupby("Year")["Labor Force"]
         .sum()
@@ -78,7 +82,7 @@ with display_load_time():
         .rename(columns={"Rate": RATE_LABEL})
     )
 
-    # ── Year filter ───────────────────────────────────────────────────────────────
+    # generate the year filter
     labor_years = set(labor_by_year["Year"].unique())
     rate_years = set(rate_by_year["Year"].unique())
     eviction_years = set(eviction_df["Year"].dropna().astype(int).unique())
@@ -90,7 +94,7 @@ with display_load_time():
 
     selected_year = st.selectbox("Select Year", common_years, index=0)
 
-    # ── Compute annual figures for selected year ──────────────────────────────────
+    # compute annual figures for selected year
     labor_year_avg = labor_by_year[labor_by_year["Year"] == selected_year][LABOR_LABEL].mean()
     rate_year_avg = rate_by_year[rate_by_year["Year"] == selected_year][RATE_LABEL].mean()
 
@@ -112,7 +116,7 @@ with display_load_time():
 
     st.divider()
 
-    # ── Borough distribution via eviction share ───────────────────────────────────
+    # borough distribution via eviction share
     st.header("Estimated Unemployed by Borough")
     st.caption(
         "Each borough's share of total evictions for the selected year is used as a "
@@ -162,16 +166,16 @@ with display_load_time():
             st.dataframe(display_df, use_container_width=True, hide_index=True)
 
         info_box(
-            "Each borough's eviction share acts as a proxy for economic distress concentration."
-            "This is a distributional estimate — not a direct measurement."
+            "Each borough's eviction share acts as a proxy for economic distress measurements."
+            "This is a distributional estimate, not a direct measurement."
         )
 
     st.divider()
 
-    # ── Bronx vs. Manhattan: three-metric comparison ─────────────────────────────
+    # Bronx vs. Manhattan comparison visual
     st.header("Bronx vs. Manhattan: Unemployment, UI Claims & Evictions")
     st.caption(
-        f"All three metrics for the selected year ({selected_year}). "
+        f"Two metrics for the selected year ({selected_year}). "
         "Each panel uses its own scale so no metric is dwarfed by another."
     )
 
@@ -240,15 +244,15 @@ with display_load_time():
             st.plotly_chart(fig_evict, use_container_width=True)
 
         info_box(
-            "The compelling story: the Bronx and Manhattan have <b>similar unemployment counts</b> "
-            "but the Bronx sees roughly <b>3× more evictions</b>. This gap — similar job loss, "
-            "dramatically different housing outcomes — points to the buffer that income, savings, "
+            "The Bronx and Manhattan have <b>similar unemployment counts</b> "
+            "but the Bronx sees roughly <b>3× more evictions</b>. This gap, similar job loss with "
+            "dramatically different housing outcomes points to the buffer that income, savings, "
             "and benefits access provide in Manhattan but not the Bronx."
         )
 
     st.divider()
 
-    # ── Unemployment by borough over time ─────────────────────────────────────────
+    # unemployment by borough over time visual
     st.header("Estimated Unemployed by Borough Over Time")
     st.caption(
         "Annual estimated unemployed per borough, derived from the yearly eviction share "
@@ -292,3 +296,5 @@ with display_load_time():
         )
         fig_trend.update_layout(height=480, legend={"orientation": "h", "y": -0.15})
         st.plotly_chart(fig_trend, use_container_width=True)
+
+    st.divider()

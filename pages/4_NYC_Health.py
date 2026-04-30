@@ -21,6 +21,7 @@ st.set_page_config(
     layout="wide",
 )
 
+# apply universal formatting
 apply_global_styles()
 
 
@@ -46,6 +47,7 @@ def display_load_time():
         st.caption(f"Page loaded in {elapsed:.2f} seconds")
 
 
+# main page formatting
 with display_load_time():
     # load cached data
     health_data = load_health_bq()
@@ -62,7 +64,7 @@ with display_load_time():
     peak_year = int(fred_yearly.loc[fred_yearly["Claims"].idxmax(), "year"])
     peak_row = merged[merged["year"] == peak_year].iloc[0]
 
-    # --- Sidebar Filters ---
+    # sidebar filters
     st.sidebar.header("Filters")
 
     year_range = st.sidebar.slider(
