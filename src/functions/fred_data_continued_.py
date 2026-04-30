@@ -2,13 +2,14 @@ import duckdb
 import pandas_gbq
 import pydata_google_auth
 
-from eviction_bq import eviction
+from src.functions.fred_data import fetch_fred
 
 PROJECT_ID = "sipa-adv-c-bouncy-banana"
-DATASET = "eviction"
-TABLE = "eviction_table"
+DATASET = "new_insurance"
+TABLE = "continued_insurance_table"
 
 # Authenticate
+fred_key = "aa9cd57aae80525dc171dbc517b39546"
 SCOPES = [
     "https://www.googleapis.com/auth/cloud-platform",
     "https://www.googleapis.com/auth/drive",
@@ -20,12 +21,12 @@ credentials = pydata_google_auth.get_user_credentials(
 )
 
 # Load and clean data
-df = eviction()
+df = fetch_fred("NYCCLAIMS", fred_key, "Continued Claims")
 
 # Inspect locally with DuckDB before sending to BigQuery
 con = duckdb.connect()
-con.execute("CREATE TABLE eviction_table AS SELECT * FROM df")
-print(con.sql("SELECT * FROM eviction_table").fetchdf().columns.tolist())
+con.execute("CREATE TABLE continued_insurance_table AS SELECT * FROM df")
+print(con.sql("SELECT * FROM continued_insurance_table").fetchdf())
 con.close()
 
 # Write to BigQuery
@@ -36,7 +37,7 @@ pandas_gbq.to_gbq(
 # Read back from BigQuery to verify
 df_new = pandas_gbq.read_gbq(
     f"SELECT * FROM `{DATASET}.{TABLE}`",
-    project_id=PROJECT_ID,  # variable, not the string "PROJECT_ID"
+    project_id=PROJECT_ID,  # variable, not the string "PROJECT_ID"E
     credentials=credentials,
 )
 

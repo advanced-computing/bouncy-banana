@@ -6,7 +6,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 
-from dashboard_data import (
+from src.functions.dashboard_data import (
     BOROUGH_ORDER,
     LABOR_LABEL,
     RATE_LABEL,
@@ -16,7 +16,7 @@ from dashboard_data import (
     load_eviction_data,
     load_ui_claims,
 )
-from utils.styles import apply_global_styles
+from src.utils.styles import apply_global_styles
 
 st.set_page_config(
     page_title="Project Dashboard",

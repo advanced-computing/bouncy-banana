@@ -6,9 +6,9 @@ import plotly.express as px
 import streamlit as st
 from google.oauth2 import service_account
 
-from fred_data import fred_from_bigquery
-from health_bq import health
-from utils.styles import apply_global_styles
+from src.functions.fred_data import fred_from_bigquery
+from src.functions.health_bq import health
+from src.utils.styles import apply_global_styles
 
 credentials = service_account.Credentials.from_service_account_info(
     st.secrets["gcp_service_account"]

@@ -6,8 +6,8 @@ import plotly.express as px
 import streamlit as st
 from google.oauth2 import service_account
 
-from fred_data import fetch_fred, fred_from_bigquery
-from utils.styles import apply_global_styles
+from src.functions.fred_data import fetch_fred, fred_from_bigquery
+from src.utils.styles import apply_global_styles
 
 apply_global_styles()
 

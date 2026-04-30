@@ -5,8 +5,8 @@ import streamlit as st
 from google.cloud import bigquery
 from google.oauth2 import service_account
 
-from eviction_bq import eviction
-from fred_data import fetch_fred, fred_from_bigquery
+from src.functions.eviction_bq import eviction
+from src.functions.fred_data import fetch_fred, fred_from_bigquery
 
 PROJECT_ID = "sipa-adv-c-bouncy-banana"
 FRED_KEY = "aa9cd57aae80525dc171dbc517b39546"

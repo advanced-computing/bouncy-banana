@@ -5,8 +5,8 @@ from contextlib import contextmanager
 import pandas as pd
 import streamlit as st
 
-from fred_data import fetch_fred
-from utils.styles import apply_global_styles
+from src.functions.fred_data import fetch_fred
+from src.utils.styles import apply_global_styles
 
 # set_page_config must be the first Streamlit call
 st.set_page_config(

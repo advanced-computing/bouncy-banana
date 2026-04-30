@@ -2,7 +2,7 @@ import duckdb
 import pandas_gbq
 import pydata_google_auth
 
-from health_initial import fetch_health_data
+from src.functions.health_initial import fetch_health_data
 
 PROJECT_ID = "sipa-adv-c-bouncy-banana"
 DATASET = "health"
