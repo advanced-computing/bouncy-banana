@@ -29,6 +29,10 @@ United States Department of Labor Unemployment Claims (FRED)
 NYC Open Data: Eviction Records
 - Updated Monthly
 - Eviction filings, shelter census, and housing court data tracking housing instability across NYC boroughs.
+## Data Loading & Model
+- We are using BigQuery to store our data taken from open source APIs for this project.
+- We use incremental loading from BigQuery to improve app performance.
+- We use st.cache to cache data in our more time-costly functions, specifically our geographic visuals.
 ## Project Setup
 1. Clone the repository
 ``` bash
