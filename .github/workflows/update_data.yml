@@ -21,4 +21,4 @@ jobs:
       - name: Update data
         env:
           BQ_BOUNCY_BANANA: ${{ secrets.BQ_BOUNCY_BANANA }}
-        run: python ${{ github.workspace }}/fred_data.py
+        run: python ${{ github.workspace }}/src/functions/fred_data.py
