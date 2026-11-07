@@ -49,7 +49,7 @@ def push_borough_labor_to_bq():
         combined,
         "unemployment.borough_labor_table",
         project_id=PROJECT_ID,
-        if_exists="append",
+        if_exists="replace",
         credentials=credentials,
     )
 
@@ -67,7 +67,7 @@ def push_borough_rates_to_bq():
         combined,
         "unemployment.borough_rates_table",
         project_id=PROJECT_ID,
-        if_exists="append",
+        if_exists="replace",
         credentials=credentials,
     )
 
@@ -136,3 +136,8 @@ def get_metrics(borough, selected_year, data, ui_annual_total):
     evictions = ev_row["Evictions"].iloc[0] if not ev_row.empty else 0
 
     return {"unemployed": unemployed, "ui_claims": ui_claims, "evictions": evictions}
+
+
+if __name__ == "__main__":
+    push_borough_labor_to_bq()
+    push_borough_rates_to_bq()

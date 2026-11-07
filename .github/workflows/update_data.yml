@@ -18,7 +18,23 @@ jobs:
           cache: pip
       - name: Install dependencies
         run: pip install -r requirements.txt
-      - name: Update data
+      - name: Update FRED new insurance data
         env:
           BQ_BOUNCY_BANANA: ${{ secrets.BQ_BOUNCY_BANANA }}
         run: python ${{ github.workspace }}/fred_data.py
+      - name: Update FRED continued insurance data
+        env:
+          BQ_BOUNCY_BANANA: ${{ secrets.BQ_BOUNCY_BANANA }}
+        run: python ${{ github.workspace }}/fred_data_continued_.py
+      - name: Update eviction data
+        env:
+          BQ_BOUNCY_BANANA: ${{ secrets.BQ_BOUNCY_BANANA }}
+        run: python ${{ github.workspace }}/eviction_data.py
+      - name: Update health data
+        env:
+          BQ_BOUNCY_BANANA: ${{ secrets.BQ_BOUNCY_BANANA }}
+        run: python ${{ github.workspace }}/health_data.py
+      - name: Update unemployment borough data
+        env:
+          BQ_BOUNCY_BANANA: ${{ secrets.BQ_BOUNCY_BANANA }}
+        run: python ${{ github.workspace }}/dashboard_data.py

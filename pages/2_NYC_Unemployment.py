@@ -82,7 +82,7 @@ with display_load_time():
     claims_df = load_fred_new_claims()
     claims_df["Date"] = pd.to_datetime(claims_df["Date"])
 
-    continued_df = load_fred_continued_claims()
+    continued_df = load_fred_continued_claims().rename(columns={"Continued Claims": "Claims"})
     continued_df["Date"] = pd.to_datetime(continued_df["Date"])
 
     # ── aggregate yearly for key metrics ──────────────────────────────────────
