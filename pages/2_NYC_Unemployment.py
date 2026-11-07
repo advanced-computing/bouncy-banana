@@ -3,6 +3,7 @@ from contextlib import contextmanager
 
 import pandas as pd
 import plotly.express as px
+import requests
 import streamlit as st
 from google.oauth2 import service_account
 
@@ -182,7 +183,7 @@ with display_load_time():
                 use_container_width=True,
             )
 
-    except Exception as e:
+    except (requests.RequestException, KeyError, IndexError, ValueError) as e:
         st.warning(str(e))
         bls_df = None
 

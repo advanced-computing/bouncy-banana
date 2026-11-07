@@ -15,7 +15,12 @@ def fetch_eviction_data(limit=50000):
     while True:
         r = requests.get(
             EVICTION_URL,
-            params={"$select": ",".join(COLUMNS), "$limit": limit, "$offset": offset, "$order": ":id"},
+            params={
+                "$select": ",".join(COLUMNS),
+                "$limit": limit,
+                "$offset": offset,
+                "$order": ":id",
+            },
             timeout=60,
         )
         r.raise_for_status()

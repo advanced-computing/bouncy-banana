@@ -154,8 +154,8 @@ with display_load_time():
             labels={"year": "Year", "Value": "Rate (%)"},
         )
         fig.update_layout(
-            xaxis=dict(tickmode="linear", dtick=1),
-            legend=dict(orientation="h", yanchor="bottom", y=-0.5, xanchor="left", x=0),
+            xaxis={"tickmode": "linear", "dtick": 1},
+            legend={"orientation": "h", "yanchor": "bottom", "y": -0.5, "xanchor": "left", "x": 0},
             hovermode="x unified",
         )
         return fig
